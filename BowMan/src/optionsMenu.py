@@ -110,7 +110,7 @@ class OptionsMenu:
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption('Bow Man - Menu Options')
+    pygame.display.set_caption('Bow Man')
 
     options_menu = OptionsMenu(screen)
     options_menu.run()

@@ -24,43 +24,62 @@ class Game:
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Charger l'image de l'archer
-        self.archer_img = pygame.image.load(os.path.join(assets_path, 'characters/archer.png')).convert_alpha()
-        self.archer_img = pygame.transform.scale(self.archer_img, (150, 300))  # Ajuster la taille de l'archer
-        self.archer_img_left_rect = self.archer_img.get_rect(
-            topleft=(50, self.height // 2 - self.archer_img.get_height() // 2))
+        self.archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters/archer.png')).convert_alpha()
+        self.archer_img_left = pygame.transform.scale(self.archer_img_left, (200, 400))  # Ajuster la taille de l'archer
 
         # Inverser l'image de l'archer pour la droite
-        self.archer_img_right = pygame.transform.flip(self.archer_img, True, False)
-        self.archer_img_right_rect = self.archer_img_right.get_rect(
+        self.archer_img_right = pygame.transform.flip(self.archer_img_left, True, False)
+
+        # Positions initiales des archers et de l'image de fond
+        self.show_left_archer = True  # Indique si l'archer de gauche est affiché
+        self.show_right_archer = False  # Indique si l'archer de droite est affiché
+
+        # Rectangles pour positionner les archers
+        self.archer_left_rect = self.archer_img_left.get_rect(
+            topleft=(50, self.height // 2 - self.archer_img_left.get_height() // 2))
+        self.archer_right_rect = self.archer_img_right.get_rect(
             topright=(self.width - 50, self.height // 2 - self.archer_img_right.get_height() // 2))
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Bouton gauche de la souris
+                    if self.show_left_archer:
+                        # Afficher l'archer de droite et une partie droite de l'image de fond
+                        self.show_left_archer = False
+                        self.show_right_archer = True
+                    elif self.show_right_archer:
+                        # Afficher l'archer de gauche et une partie gauche de l'image de fond
+                        self.show_left_archer = True
+                        self.show_right_archer = False
+
+    def draw(self):
+        self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
+
+        if self.show_left_archer:
+            self.screen.blit(self.archer_img_left, self.archer_left_rect)
+
+        if self.show_right_archer:
+            self.screen.blit(self.archer_img_right, self.archer_right_rect)
+
+        pygame.display.flip()
 
     def run(self):
         running = True
 
         while running:
-            self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
-
-            # Afficher l'image de l'archer de chaque côté
-            self.screen.blit(self.archer_img, self.archer_img_left_rect)
-            self.screen.blit(self.archer_img_right, self.archer_img_right_rect)
-
-            # Gestion des événements
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # Bouton gauche de la souris
-                        pass  # Ajouter votre logique de jeu ici
-
-            pygame.display.flip()
+            self.handle_events()
+            self.draw()
             self.clock.tick(30)  # Limiter la vitesse de rafraîchissement à 30 FPS
 
 
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((1200, 800))  # Agrandir la fenêtre
-    pygame.display.set_caption('Bow Man - Jeu')
+    pygame.display.set_caption('Bow Man')
 
     game = Game(screen)
     game.run()

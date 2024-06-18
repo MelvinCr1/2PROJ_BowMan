@@ -84,7 +84,7 @@ class CreditsPage:
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption('Bow Man - Credits')
+    pygame.display.set_caption('Bow Man')
 
     credits_page = CreditsPage(screen)
     credits_page.run()
