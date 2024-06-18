@@ -4,6 +4,7 @@ import pygame
 import sys
 import os
 from optionsMenu import OptionsMenu  # Importez votre classe OptionsMenu
+from game import Game
 
 class MainMenu:
     def __init__(self, screen):
@@ -63,11 +64,11 @@ class MainMenu:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
-                            print("Lancer le jeu...")
-                            # Ici vous lancerez le jeu
+                            game = Game(self.screen)  # Créer une instance du menu d'options
+                            game.run()
                         elif self.options_button_rect.collidepoint(pos):
                             options_menu = OptionsMenu(self.screen)  # Créer une instance du menu d'options
-                            options_menu.run()  # Lancer le menu d'options
+                            options_menu.run()
                         elif self.quit_button_rect.collidepoint(pos):
                             print("Fermeture du jeu...")
                             pygame.quit()

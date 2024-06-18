@@ -1,46 +1,66 @@
+# game.py
+
 import pygame
 import sys
 import os
 
-# Définir quelques constantes utiles
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-FPS = 30
 
-# Initialisation de Pygame
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Bow Man - Game')
+class Game:
+    def __init__(self, screen):
+        self.screen = screen
+        self.width, self.height = screen.get_size()
+        self.clock = pygame.time.Clock()
 
-# Charger les ressources
-base_path = os.path.dirname(os.path.abspath(__file__))
-assets_path = os.path.join(base_path, 'assets/')  # Assurez-vous d'ajuster selon votre structure de fichiers
+        # Chemin absolu vers le dossier assets depuis le répertoire principal
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
 
-# Charger l'image de fond
-background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background.jpg')).convert()
-background_img = pygame.transform.scale(background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Définir les nouvelles dimensions de la fenêtre de jeu
+        self.width, self.height = 1200, 800  # Agrandir la fenêtre
+        self.screen = pygame.display.set_mode((self.width, self.height))
 
-# Définir la boucle principale du jeu
-def game():
-    running = True
+        # Charger l'image de fond
+        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background.jpg')).convert()
+        self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
-    while running:
-        # Gestion des événements
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        # Charger l'image de l'archer
+        self.archer_img = pygame.image.load(os.path.join(assets_path, 'characters/archer.png')).convert_alpha()
+        self.archer_img = pygame.transform.scale(self.archer_img, (150, 300))  # Ajuster la taille de l'archer
+        self.archer_img_left_rect = self.archer_img.get_rect(
+            topleft=(50, self.height // 2 - self.archer_img.get_height() // 2))
 
-        # Affichage du fond
-        screen.blit(background_img, (0, 0))
+        # Inverser l'image de l'archer pour la droite
+        self.archer_img_right = pygame.transform.flip(self.archer_img, True, False)
+        self.archer_img_right_rect = self.archer_img_right.get_rect(
+            topright=(self.width - 50, self.height // 2 - self.archer_img_right.get_height() // 2))
 
-        # Actualiser l'écran
-        pygame.display.flip()
+    def run(self):
+        running = True
 
-        # Limiter la vitesse de rafraîchissement
-        pygame.time.Clock().tick(FPS)
+        while running:
+            self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
 
-    pygame.quit()
-    sys.exit()
+            # Afficher l'image de l'archer de chaque côté
+            self.screen.blit(self.archer_img, self.archer_img_left_rect)
+            self.screen.blit(self.archer_img_right, self.archer_img_right_rect)
 
-if __name__ == '__game__':
-    game()
+            # Gestion des événements
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:  # Bouton gauche de la souris
+                        pass  # Ajouter votre logique de jeu ici
+
+            pygame.display.flip()
+            self.clock.tick(30)  # Limiter la vitesse de rafraîchissement à 30 FPS
+
+
+if __name__ == '__main__':
+    pygame.init()
+    screen = pygame.display.set_mode((1200, 800))  # Agrandir la fenêtre
+    pygame.display.set_caption('Bow Man - Jeu')
+
+    game = Game(screen)
+    game.run()
