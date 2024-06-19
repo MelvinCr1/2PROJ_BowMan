@@ -4,7 +4,7 @@ import pygame
 import sys
 import os
 from optionsMenu import OptionsMenu  # Importez votre classe OptionsMenu
-from game import Game
+from game import Game  # Importez la classe Game depuis game.py
 
 class MainMenu:
     def __init__(self, screen):
@@ -17,7 +17,7 @@ class MainMenu:
         assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
 
         # Charger l'image de fond
-        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background.jpg')).convert()
+        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
 
         # Redimensionner l'image de fond pour qu'elle remplisse l'écran
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
@@ -64,7 +64,7 @@ class MainMenu:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
-                            game = Game(self.screen)  # Créer une instance du menu d'options
+                            game = Game(self.screen)  # Choisir le fond souhaité
                             game.run()
                         elif self.options_button_rect.collidepoint(pos):
                             options_menu = OptionsMenu(self.screen)  # Créer une instance du menu d'options
