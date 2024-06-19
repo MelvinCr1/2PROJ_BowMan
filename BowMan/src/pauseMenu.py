@@ -23,7 +23,7 @@ class PauseMenu:
         self.options_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/options.png')).convert_alpha()
         self.options_button_img = pygame.transform.scale(self.options_button_img, (int(self.options_button_img.get_width() * button_scale), int(self.options_button_img.get_height() * button_scale)))
 
-        self.main_menu_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/home.png')).convert_alpha()
+        self.main_menu_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/menu.png')).convert_alpha()
         self.main_menu_button_img = pygame.transform.scale(self.main_menu_button_img, (int(self.main_menu_button_img.get_width() * button_scale), int(self.main_menu_button_img.get_height() * button_scale)))
 
         self.quit_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/quit.png')).convert_alpha()
@@ -72,7 +72,6 @@ class PauseMenu:
                     elif self.main_menu_button_rect.collidepoint(pos):
                         return "main_menu"
                     elif self.quit_button_rect.collidepoint(pos):
-                        pygame.quit()
-                        sys.exit()
+                        print('fermeture du jeu via echap')
                         return "quit"
         return None

@@ -79,7 +79,7 @@ class MainMenu:
 
 if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man')
 
     menu = MainMenu(screen)
