@@ -14,7 +14,7 @@ class CreditsPage:
         assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
 
         # Charger l'image de fond pour la page de crédits
-        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background.jpg')).convert()
+        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Charger la police pour le texte des crédits
