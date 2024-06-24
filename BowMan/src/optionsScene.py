@@ -1,10 +1,10 @@
-# optionsMenu.py
+# optionsScene.py
 import pygame
 import sys
 import os
-from creditsMenu import CreditsPage  # Importer la classe CreditsPage depuis creditsMenu.py
+from creditsScene import CreditsScene
 
-class OptionsMenu:
+class OptionsScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -100,7 +100,7 @@ class OptionsMenu:
                             print("Redirection vers la documentation utilisateur...")
                             # Implémentez la redirection vers le document PDF (à faire)
                         elif self.info_button_rect.collidepoint(pos):
-                            credits_menu = CreditsPage(self.screen)  # Créer une instance du menu d'options
+                            credits_menu = CreditsScene(self.screen)  # Créer une instance du menu d'options
                             credits_menu.run()
 
             pygame.display.flip()
@@ -112,5 +112,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption('Bow Man')
 
-    options_menu = OptionsMenu(screen)
+    options_menu = OptionsScene(screen)
     options_menu.run()

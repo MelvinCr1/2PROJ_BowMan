@@ -1,63 +1,15 @@
 import pygame
 import sys
 import os
-from pauseMenu import PauseMenu
-from optionsMenu import OptionsMenu
-from endGameMenu import EndGameMenu
+import math
+from pauseScene import PauseScene
+from optionsScene import OptionsScene
+from endGameScene import EndGameScene
+from gameLogic.arrow import Arrow
+from gameLogic.archer import Archer
+from gameLogic.obstacle import Obstacle
 
-class Ball:
-    def __init__(self, screen, start_x, start_y, x_velocity, y_velocity):
-        self.screen = screen
-        self.x = start_x
-        self.y = start_y
-        self.radius = 10
-        self.color = (255, 0, 0)
-        self.gravity = 0.5
-        self.x_velocity = x_velocity
-        self.y_velocity = y_velocity
-        self.damage = 10
-
-    def update(self):
-        self.x += self.x_velocity
-        self.y_velocity += self.gravity
-        self.y += self.y_velocity
-
-        if self.y + self.radius > self.screen.get_height():
-            self.y = self.screen.get_height() - self.radius
-            self.y_velocity = 0
-            self.x_velocity = 0
-
-    def draw(self, camera_x):
-        pygame.draw.circle(self.screen, self.color, (int(self.x - camera_x), int(self.y)), self.radius)
-
-class Archer:
-    def __init__(self, image, x, y, screen):
-        self.image = image
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.screen = screen
-        self.health = 30
-
-    def draw(self, camera_x):
-        self.screen.blit(self.image, (self.rect.x - camera_x, self.rect.y))
-        self.draw_health(camera_x)
-
-    def draw_health(self, camera_x):
-        font = pygame.font.Font(None, 36)
-        health_text = font.render(f"HP: {self.health}", True, (255, 255, 255))
-        self.screen.blit(health_text, (self.rect.x - camera_x, self.rect.y - 30))
-
-class Obstacle:
-    def __init__(self, screen, x, y, width, height):
-        self.screen = screen
-        self.color = (100, 100, 100)
-        self.rect1 = pygame.Rect(x, y, width, height // 2)
-        self.rect2 = pygame.Rect(x, y + height // 2, width, height // 2)
-
-    def draw(self, camera_x):
-        pygame.draw.rect(self.screen, self.color, self.rect1.move(-camera_x, 0))
-        pygame.draw.rect(self.screen, self.color, self.rect2.move(-camera_x, 0))
-
-class Game:
+class GameScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -85,10 +37,16 @@ class Game:
         self.move_camera_right = False
 
         self.paused = False
-        self.pause_menu = PauseMenu(screen)
+        self.pause_menu = PauseScene(screen)
 
         self.balls = []
         self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 50, 200, 400)  # Initialisation de l'obstacle
+
+        self.turn = 'left'  # 'left' ou 'right'
+
+        # Attributs pour la puissance et l'angle de tir
+        self.shoot_power = 20
+        self.shoot_angle = 45
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -99,13 +57,38 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     self.paused = not self.paused
                 elif event.key == pygame.K_a and not self.paused:
-                    new_ball = Ball(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, 50, -10)
-                    self.balls.append(new_ball)
-                elif event.key == pygame.K_q and not self.paused:
-                    new_ball = Ball(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -50, -10)
-                    self.balls.append(new_ball)
+                    # Calcul de la vélocité initiale basée sur la puissance et l'angle
+                    angle_radians = math.radians(self.shoot_angle)
+                    x_velocity = self.shoot_power * math.cos(angle_radians)
+                    y_velocity = -self.shoot_power * math.sin(angle_radians)
+
+                    if self.turn == 'left':
+                        new_ball = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity)
+                        self.balls.append(new_ball)
+                        self.turn = 'right'
+                    elif self.turn == 'right':
+                        new_ball = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity)
+                        self.balls.append(new_ball)
+                        self.turn = 'left'
                 elif event.key == pygame.K_o:  # Touche 'o' pour placer un obstacle
                     self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 150, 200, 800)
+                # Contrôles pour ajuster la puissance et l'angle de tir
+                elif event.key == pygame.K_UP:
+                    self.shoot_angle += 1
+                    if self.shoot_angle > 90:
+                        self.shoot_angle = 90
+                elif event.key == pygame.K_DOWN:
+                    self.shoot_angle -= 1
+                    if self.shoot_angle < 0:
+                        self.shoot_angle = 0
+                elif event.key == pygame.K_RIGHT:
+                    self.shoot_power += 1
+                    if self.shoot_power > 100:
+                        self.shoot_power = 100
+                elif event.key == pygame.K_LEFT:
+                    self.shoot_power -= 1
+                    if self.shoot_power < 1:
+                        self.shoot_power = 1
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and not self.paused:
                     self.move_camera_right = not self.move_camera_right
@@ -114,10 +97,10 @@ class Game:
                     if action == "continue":
                         self.paused = False
                     elif action == "options":
-                        options_menu = OptionsMenu(self.screen)
+                        options_menu = OptionsScene(self.screen)
                         options_menu.run()
                     elif action == "main_menu":
-                        from mainMenu import MainMenu
+                        from mainScene import MainMenu
                         main_menu = MainMenu(self.screen)
                         main_menu.run()
                         pygame.quit()
@@ -132,25 +115,30 @@ class Game:
                 self.archer_left.health -= ball.damage
                 self.balls.remove(ball)
                 if self.archer_left.health <= 0:
-                    end_game_menu = EndGameMenu(self.screen, "Archer Droit")
+                    end_game_menu = EndGameScene(self.screen, "Archer Droit")
                     end_game_menu.run()
 
             elif ball.x - ball.radius < self.archer_right.rect.right and ball.x + ball.radius > self.archer_right.rect.left and ball.y - ball.radius < self.archer_right.rect.bottom and ball.y + ball.radius > self.archer_right.rect.top:
                 self.archer_right.health -= ball.damage
                 self.balls.remove(ball)
                 if self.archer_right.health <= 0:
-                    end_game_menu = EndGameMenu(self.screen, "Archer Gauche")
+                    end_game_menu = EndGameScene(self.screen, "Archer Gauche")
                     end_game_menu.run()
 
     def update(self):
-        if self.move_camera_right and self.camera_x < (self.scene_width - self.width):
-            self.camera_x += self.camera_speed
-            if self.camera_x > (self.scene_width - self.width):
-                self.camera_x = self.scene_width - self.width
-        elif not self.move_camera_right and self.camera_x > 0:
-            self.camera_x -= self.camera_speed
-            if self.camera_x < 0:
-                self.camera_x = 0
+        if self.balls:
+            # Suivre la balle la plus récente
+            ball = self.balls[-1]
+            target_camera_x = ball.x - self.width // 2
+
+            # Assurez-vous que la caméra ne dépasse pas les limites de la scène
+            if target_camera_x < 0:
+                target_camera_x = 0
+            elif target_camera_x > self.scene_width - self.width:
+                target_camera_x = self.scene_width - self.width
+
+            # Déplacer la caméra en douceur vers la position cible
+            self.camera_x += (target_camera_x - self.camera_x) * 0.1
 
         for ball in self.balls:
             ball.update()
@@ -168,6 +156,13 @@ class Game:
         for ball in self.balls:
             ball.draw(self.camera_x)
 
+        # Afficher la puissance et l'angle de tir
+        font = pygame.font.Font(None, 36)
+        power_text = font.render(f"Power: {self.shoot_power} (< >)", True, (255, 255, 255))
+        angle_text = font.render(f"Angle: {self.shoot_angle} (^ v️)", True, (255, 255, 255))
+        self.screen.blit(power_text, (10, 10))
+        self.screen.blit(angle_text, (10, 50))
+
         pygame.display.flip()
 
     def run(self):
@@ -183,10 +178,10 @@ class Game:
                 if action == "continue":
                     self.paused = False
                 elif action == "options":
-                    options_menu = OptionsMenu(self.screen)
+                    options_menu = OptionsScene(self.screen)
                     options_menu.run()
                 elif action == "main_menu":
-                    from mainMenu import MainMenu
+                    from mainScene import MainMenu
                     main_menu = MainMenu(self.screen)
                     main_menu.run()
                     running = False
@@ -201,5 +196,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man')
 
-    game = Game(screen)
+    game = GameScene(screen)
     game.run()

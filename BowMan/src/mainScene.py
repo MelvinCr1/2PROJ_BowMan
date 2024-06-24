@@ -1,12 +1,12 @@
-# mainMenu.py
+# mainScene.py
 
 import pygame
 import sys
 import os
-from optionsMenu import OptionsMenu  # Importez votre classe OptionsMenu
-from game import Game  # Importez la classe Game depuis game.py
+from optionsScene import OptionsScene
+from gameScene import GameScene
 
-class MainMenu:
+class MainScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -64,10 +64,10 @@ class MainMenu:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
-                            game = Game(self.screen)  # Choisir le fond souhaité
+                            game = GameScene(self.screen)  # Choisir le fond souhaité
                             game.run()
                         elif self.options_button_rect.collidepoint(pos):
-                            options_menu = OptionsMenu(self.screen)  # Créer une instance du menu d'options
+                            options_menu = OptionsScene(self.screen)  # Créer une instance du menu d'options
                             options_menu.run()
                         elif self.quit_button_rect.collidepoint(pos):
                             print("Fermeture du jeu...")
@@ -82,5 +82,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man')
 
-    menu = MainMenu(screen)
+    menu = MainScene(screen)
     menu.run()

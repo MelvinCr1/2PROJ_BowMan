@@ -1,9 +1,9 @@
 import pygame
 import sys
 import os
-from game import Game
+from gameScene import GameScene
 
-class CustomizationMenu:
+class CustomizationScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -56,7 +56,7 @@ class CustomizationMenu:
                         elif self.next_button.collidepoint(pos):
                             self.selected_background = (self.selected_background + 1) % len(self.background_images)
                         elif self.start_button.collidepoint(pos):
-                            game = Game(self.screen, self.background_images[self.selected_background])
+                            game = GameScene(self.screen, self.background_images[self.selected_background])
                             game.run()
 
             self.screen.blit(self.background_images[self.selected_background], (0, 0))
@@ -79,5 +79,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man - Personnalisation')
 
-    customization_menu = CustomizationMenu(screen)
+    customization_menu = CustomizationScene(screen)
     customization_menu.run()

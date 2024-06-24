@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-class EndGameMenu:
+class EndGameScene:
     def __init__(self, screen, winner):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -54,7 +54,7 @@ class EndGameMenu:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_again_button.collidepoint(pos):
-                            from mainMenu import MainMenu
+                            from mainScene import MainMenu
                             main_menu = MainMenu(self.screen)
                             main_menu.run()
                         elif self.quit_button.collidepoint(pos):
@@ -69,5 +69,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man - Fin de partie')
 
-    end_game_menu = EndGameMenu(screen, "Archer Gauche")
+    end_game_menu = EndGameScene(screen, "Archer Gauche")
     end_game_menu.run()

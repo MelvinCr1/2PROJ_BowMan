@@ -1,12 +1,12 @@
-# pauseMenu.py
+# pauseScene.py
 
 import pygame
 import sys
 import os
 
-from optionsMenu import OptionsMenu  # Importez votre classe OptionsMenu
+from optionsScene import OptionsScene
 
-class PauseMenu:
+class PauseScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -67,7 +67,7 @@ class PauseMenu:
                     if self.continue_button_rect.collidepoint(pos):
                         return "continue"
                     elif self.options_button_rect.collidepoint(pos):
-                        options_menu = OptionsMenu(self.screen)  # Créer une instance du menu d'options
+                        options_menu = OptionsScene(self.screen)  # Créer une instance du menu d'options
                         options_menu.run()
                     elif self.main_menu_button_rect.collidepoint(pos):
                         return "main_menu"

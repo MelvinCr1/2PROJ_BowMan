@@ -1,9 +1,9 @@
-# creditsMenu.py
+# creditsScene.py
 import pygame
 import sys
 import os
 
-class CreditsPage:
+class CreditsScene:
     def __init__(self, screen):
         self.screen = screen
         self.width, self.height = screen.get_size()
@@ -86,5 +86,5 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption('Bow Man')
 
-    credits_page = CreditsPage(screen)
+    credits_page = CreditsScene(screen)
     credits_page.run()
