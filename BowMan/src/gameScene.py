@@ -1,3 +1,4 @@
+from pygame.locals import *
 import pygame
 import sys
 import os
@@ -39,12 +40,11 @@ class GameScene:
         self.paused = False
         self.pause_menu = PauseScene(screen)
 
-        self.balls = []
-        self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 50, 200, 400)  # Initialisation de l'obstacle
+        self.arrows = []  # Utiliser des flèches à la place de balls
+        self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 50, 200, 400)
 
-        self.turn = 'left'  # 'left' ou 'right'
+        self.turn = 'left'
 
-        # Attributs pour la puissance et l'angle de tir
         self.shoot_power = 20
         self.shoot_angle = 45
 
@@ -57,22 +57,20 @@ class GameScene:
                 if event.key == pygame.K_ESCAPE:
                     self.paused = not self.paused
                 elif event.key == pygame.K_a and not self.paused:
-                    # Calcul de la vélocité initiale basée sur la puissance et l'angle
                     angle_radians = math.radians(self.shoot_angle)
                     x_velocity = self.shoot_power * math.cos(angle_radians)
                     y_velocity = -self.shoot_power * math.sin(angle_radians)
 
                     if self.turn == 'left':
-                        new_ball = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity)
-                        self.balls.append(new_ball)
+                        new_arrow = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity)
+                        self.arrows.append(new_arrow)
                         self.turn = 'right'
                     elif self.turn == 'right':
-                        new_ball = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity)
-                        self.balls.append(new_ball)
+                        new_arrow = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity)
+                        self.arrows.append(new_arrow)
                         self.turn = 'left'
-                elif event.key == pygame.K_o:  # Touche 'o' pour placer un obstacle
+                elif event.key == pygame.K_o:
                     self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 150, 200, 800)
-                # Contrôles pour ajuster la puissance et l'angle de tir
                 elif event.key == pygame.K_UP:
                     self.shoot_angle += 1
                     if self.shoot_angle > 90:
@@ -110,38 +108,35 @@ class GameScene:
                         sys.exit()
 
     def check_collisions(self):
-        for ball in self.balls:
-            if ball.x - ball.radius < self.archer_left.rect.right and ball.x + ball.radius > self.archer_left.rect.left and ball.y - ball.radius < self.archer_left.rect.bottom and ball.y + ball.radius > self.archer_left.rect.top:
-                self.archer_left.health -= ball.damage
-                self.balls.remove(ball)
+        for arrow in self.arrows:
+            if arrow.x < self.archer_left.rect.right and arrow.x > self.archer_left.rect.left and arrow.y < self.archer_left.rect.bottom and arrow.y > self.archer_left.rect.top:
+                self.archer_left.health -= arrow.damage
+                self.arrows.remove(arrow)
                 if self.archer_left.health <= 0:
-                    end_game_menu = EndGameScene(self.screen, "Archer Droit")
-                    end_game_menu.run()
-
-            elif ball.x - ball.radius < self.archer_right.rect.right and ball.x + ball.radius > self.archer_right.rect.left and ball.y - ball.radius < self.archer_right.rect.bottom and ball.y + ball.radius > self.archer_right.rect.top:
-                self.archer_right.health -= ball.damage
-                self.balls.remove(ball)
-                if self.archer_right.health <= 0:
                     end_game_menu = EndGameScene(self.screen, "Archer Gauche")
                     end_game_menu.run()
 
-    def update(self):
-        if self.balls:
-            # Suivre la balle la plus récente
-            ball = self.balls[-1]
-            target_camera_x = ball.x - self.width // 2
+            elif arrow.x < self.archer_right.rect.right and arrow.x > self.archer_right.rect.left and arrow.y < self.archer_right.rect.bottom and arrow.y > self.archer_right.rect.top:
+                self.archer_right.health -= arrow.damage
+                self.arrows.remove(arrow)
+                if self.archer_right.health <= 0:
+                    end_game_menu = EndGameScene(self.screen, "Archer Droit")
+                    end_game_menu.run()
 
-            # Assurez-vous que la caméra ne dépasse pas les limites de la scène
+    def update(self):
+        if self.arrows:
+            arrow = self.arrows[-1]
+            target_camera_x = arrow.x - self.width // 2
+
             if target_camera_x < 0:
                 target_camera_x = 0
             elif target_camera_x > self.scene_width - self.width:
                 target_camera_x = self.scene_width - self.width
 
-            # Déplacer la caméra en douceur vers la position cible
             self.camera_x += (target_camera_x - self.camera_x) * 0.1
 
-        for ball in self.balls:
-            ball.update()
+        for arrow in self.arrows:
+            arrow.update()
 
         self.check_collisions()
 
@@ -151,12 +146,11 @@ class GameScene:
         self.archer_left.draw(self.camera_x)
         self.archer_right.draw(self.camera_x)
 
-        self.obstacle.draw(self.camera_x)  # Dessiner l'obstacle
+        self.obstacle.draw(self.camera_x)
 
-        for ball in self.balls:
-            ball.draw(self.camera_x)
+        for arrow in self.arrows:
+            arrow.draw(self.camera_x)
 
-        # Afficher la puissance et l'angle de tir
         font = pygame.font.Font(None, 36)
         power_text = font.render(f"Power: {self.shoot_power} (< >)", True, (255, 255, 255))
         angle_text = font.render(f"Angle: {self.shoot_angle} (^ v️)", True, (255, 255, 255))

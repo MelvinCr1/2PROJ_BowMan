@@ -45,8 +45,18 @@ class MainScene:
         self.quit_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + (button_height + button_spacing) * 2, button_width, button_height)
 
     def run(self):
-        running = True
+        # Initialisation de pygame.mixer pour gérer les effets sonores et la musique
+        pygame.mixer.init()
 
+        # Chemin absolu vers le dossier assets/sounds
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
+
+        # Charger et jouer la musique de fond en boucle
+        background_music = pygame.mixer.Sound(os.path.join(assets_path, 'sounds/background_music.mp3'))
+        background_music.play(loops=-1)  # -1 pour jouer en boucle indéfiniment
+
+        running = True
         while running:
             self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
 
@@ -67,8 +77,8 @@ class MainScene:
                             game = GameScene(self.screen)  # Choisir le fond souhaité
                             game.run()
                         elif self.options_button_rect.collidepoint(pos):
-                            options_menu = OptionsScene(self.screen)  # Créer une instance du menu d'options
-                            options_menu.run()
+                            options_menu = OptionsScene(self.screen, background_music=background_music)  # Créer une instance du menu d'options
+                            options_menu.run()  # Utiliser la méthode run() au lieu de show()
                         elif self.quit_button_rect.collidepoint(pos):
                             print("Fermeture du jeu...")
                             pygame.quit()

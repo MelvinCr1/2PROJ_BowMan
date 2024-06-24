@@ -27,7 +27,7 @@ class CreditsScene:
             "",
             "Credits:",
             "Sound Effects: //",
-            "Background Music: //",
+            "Background Music: Aberrant Realities",
             "Artwork: //",
             "",
             "© 2024 Melvin C. All Rights Reserved."

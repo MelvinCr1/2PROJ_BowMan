@@ -1,11 +1,12 @@
 # optionsScene.py
+
 import pygame
 import sys
 import os
 from creditsScene import CreditsScene
 
 class OptionsScene:
-    def __init__(self, screen):
+    def __init__(self, screen, music_enabled=False, background_music=None):
         self.screen = screen
         self.width, self.height = screen.get_size()
         self.clock = pygame.time.Clock()
@@ -54,7 +55,14 @@ class OptionsScene:
 
         # Attributs d'état pour les boutons
         self.audio_active = False
-        self.music_active = False
+        self.music_active = music_enabled
+
+        # Initialiser la musique de fond si activée
+        if self.music_active and background_music:
+            self.background_music = background_music
+            self.background_music.play(-1)  # Jouer la musique en boucle
+        else:
+            self.background_music = None
 
     def run(self):
         running = True
@@ -95,7 +103,10 @@ class OptionsScene:
                         elif self.music_button_rect.collidepoint(pos):
                             print("Gestion de la musique...")
                             self.music_active = not self.music_active  # Inverser l'état du bouton musique
-                            # Implémentez la gestion de la musique (à faire)
+                            if self.music_active and self.background_music:
+                                self.background_music.play(-1)  # Jouer la musique en boucle
+                            else:
+                                pygame.mixer.music.stop()  # Arrêter la musique
                         elif self.questionmark_button_rect.collidepoint(pos):
                             print("Redirection vers la documentation utilisateur...")
                             # Implémentez la redirection vers le document PDF (à faire)
@@ -105,12 +116,3 @@ class OptionsScene:
 
             pygame.display.flip()
             self.clock.tick(30)  # Limiter la vitesse de rafraîchissement à 30 FPS
-
-
-if __name__ == '__main__':
-    pygame.init()
-    screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption('Bow Man')
-
-    options_menu = OptionsScene(screen)
-    options_menu.run()
