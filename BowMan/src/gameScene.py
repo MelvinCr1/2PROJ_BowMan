@@ -1,3 +1,4 @@
+
 from pygame.locals import *
 import pygame
 import sys
@@ -11,7 +12,7 @@ from gameLogic.archer import Archer
 from gameLogic.obstacle import Obstacle
 
 class GameScene:
-    def __init__(self, screen):
+    def __init__(self, screen, settings):
         self.screen = screen
         self.width, self.height = screen.get_size()
         self.clock = pygame.time.Clock()
@@ -22,10 +23,10 @@ class GameScene:
         self.scene_width, self.scene_height = 2400, 800
         self.screen = pygame.display.set_mode((self.width, self.height))
 
-        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
+        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds', settings["background"])).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.scene_width, self.scene_height))
 
-        archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters/archer.png')).convert_alpha()
+        archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters', settings["style"])).convert_alpha()
         archer_img_left = pygame.transform.scale(archer_img_left, (200, 400))
 
         archer_img_right = pygame.transform.flip(archer_img_left, True, False)
@@ -40,7 +41,7 @@ class GameScene:
         self.paused = False
         self.pause_menu = PauseScene(screen)
 
-        self.arrows = []  # Utiliser des flèches à la place de balls
+        self.arrows = []
         self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 50, 200, 400)
 
         self.turn = 'left'
@@ -164,10 +165,12 @@ class GameScene:
 
         while running:
             self.handle_events()
+            
             if not self.paused:
                 self.update()
                 self.draw()
             else:
+                self.pause_menu.draw()  # Afficher l'interface de pause
                 action = self.pause_menu.handle_events()
                 if action == "continue":
                     self.paused = False
@@ -175,8 +178,8 @@ class GameScene:
                     options_menu = OptionsScene(self.screen)
                     options_menu.run()
                 elif action == "main_menu":
-                    from mainScene import MainMenu
-                    main_menu = MainMenu(self.screen)
+                    from mainScene import MainScene
+                    main_menu = MainScene(self.screen)
                     main_menu.run()
                     running = False
                 elif action == "quit":
@@ -190,5 +193,6 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man')
 
-    game = GameScene(screen)
+    settings = {"background": "background1.jpg", "style": "archer.png", "play_mode": "local"}  # Valeurs par défaut
+    game = GameScene(screen, settings)
     game.run()

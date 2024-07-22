@@ -75,3 +75,11 @@ class PauseScene:
                         print('fermeture du jeu via echap')
                         return "quit"
         return None
+
+if __name__ == '__main__':
+    pygame.init()
+    screen = pygame.display.set_mode((1600, 800))
+    pygame.display.set_caption('Bow Man')
+
+    menu = PauseScene(screen)
+    menu()

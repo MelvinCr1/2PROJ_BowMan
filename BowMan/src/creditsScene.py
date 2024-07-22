@@ -20,7 +20,6 @@ class CreditsScene:
         # Charger la police pour le texte des crédits
         self.credits_font = pygame.font.Font(None, 36)  # Utilisez votre propre fichier de police si nécessaire
 
-        # Texte des crédits
         self.credits_text = [
             "Bow Man Game",
             "Developed by Melvin C",
