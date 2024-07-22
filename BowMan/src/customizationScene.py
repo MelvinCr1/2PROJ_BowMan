@@ -1,5 +1,9 @@
+# Ce fichier contiendra une classe permettant de configurer les options multijoueur et de passer à la scène de jeu avec les paramètres appropirés.
+
 import pygame
 import os
+import sys
+from gameScene import GameScene  # Import GameScene
 
 class CustomizationScene:
     def __init__(self, screen):
