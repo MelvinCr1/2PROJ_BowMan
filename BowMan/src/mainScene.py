@@ -5,6 +5,7 @@ import sys
 import os
 from optionsScene import OptionsScene
 from gameScene import GameScene
+from customizationScene import CustomizationScene
 
 class MainScene:
     def __init__(self, screen):
@@ -74,7 +75,7 @@ class MainScene:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
-                            game = GameScene(self.screen)  # Choisir le fond souhaité
+                            game = CustomizationScene(self.screen)  # Choisir le fond souhaité
                             game.run()
                         elif self.options_button_rect.collidepoint(pos):
                             options_menu = OptionsScene(self.screen, background_music=background_music)  # Créer une instance du menu d'options

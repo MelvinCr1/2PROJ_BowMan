@@ -1,9 +1,9 @@
-# Ce fichier contiendra une classe permettant de configurer les options multijoueur et de passer à la scène de jeu avec les paramètres appropirés.
+# customizationScene.py
 
 import pygame
 import os
 import sys
-from gameScene import GameScene  # Import GameScene
+from gameScene import GameScene
 
 class CustomizationScene:
     def __init__(self, screen):
@@ -12,7 +12,7 @@ class CustomizationScene:
         self.clock = pygame.time.Clock()
         self.selected_background = None
         self.selected_style = None
-        self.play_mode = 'local'
+        self.play_mode = 'player vs player'  # Valeur par défaut
 
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.assets_path = os.path.join(self.base_path, '../assets/')
@@ -23,7 +23,6 @@ class CustomizationScene:
         self.selected_background = self.background_options[0]
         self.selected_style = self.style_options[0]
 
-        # Load images
         self.background_images = [self.load_image(os.path.join(self.assets_path, 'backgrounds', bg), (self.width, self.height)) for bg in self.background_options]
         self.style_images = [self.load_image(os.path.join(self.assets_path, 'characters', style), (200, 400)) for style in self.style_options]
 
@@ -38,9 +37,9 @@ class CustomizationScene:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return "main_menu"
+                    return {"action": "main_menu"}
                 elif event.key == pygame.K_RETURN:
-                    return "start_game"
+                    return {"action": "start_game", "background": self.selected_background, "style": self.selected_style, "play_mode": self.play_mode}
                 elif event.key == pygame.K_b:
                     current_index = self.background_options.index(self.selected_background)
                     self.selected_background = self.background_options[(current_index + 1) % len(self.background_options)]
@@ -48,15 +47,15 @@ class CustomizationScene:
                     current_index = self.style_options.index(self.selected_style)
                     self.selected_style = self.style_options[(current_index + 1) % len(self.style_options)]
                 elif event.key == pygame.K_m:
-                    self.play_mode = 'local' if self.play_mode == 'ai' else 'ai'
+                    modes = ['player vs player', 'player vs computer', 'player vs player (local)']
+                    current_index = modes.index(self.play_mode)
+                    self.play_mode = modes[(current_index + 1) % len(modes)]
         return None
 
     def draw(self):
-        # Draw selected background
         background_index = self.background_options.index(self.selected_background)
         self.screen.blit(self.background_images[background_index], (0, 0))
 
-        # Draw archers in their positions
         style_index = self.style_options.index(self.selected_style)
         archer_left = self.style_images[style_index]
         archer_right = pygame.transform.flip(archer_left, True, False)
@@ -67,11 +66,10 @@ class CustomizationScene:
         self.screen.blit(archer_left, left_position)
         self.screen.blit(archer_right, right_position)
 
-        # Draw text options in the center
         font = pygame.font.Font(None, 36)
         background_text = font.render(f"Background: {self.selected_background} (Press B to change)", True, (255, 255, 255))
         style_text = font.render(f"Style: {self.selected_style} (Press S to change)", True, (255, 255, 255))
-        mode_text = font.render(f"Mode: {'AI' if self.play_mode == 'ai' else 'Local'} (Press M to change)", True, (255, 255, 255))
+        mode_text = font.render(f"Mode: {self.play_mode} (Press M to change)", True, (255, 255, 255))
         start_text = font.render("Press ENTER to start", True, (255, 255, 255))
 
         text_x = self.width // 2 - background_text.get_width() // 2
@@ -84,14 +82,16 @@ class CustomizationScene:
 
     def run(self):
         while True:
-            action = self.handle_events()
-            if action:
-                return {
-                    'action': action,
-                    'selected_background': self.selected_background,
-                    'selected_style': self.selected_style,
-                    'play_mode': self.play_mode
-                }
+            result = self.handle_events()
+            if result:
+                if result["action"] == "start_game":
+                    game = GameScene(self.screen, {
+                        "background": result["background"],
+                        "style": result["style"],
+                        "play_mode": result["play_mode"]
+                    })
+                    game.run()
+                return result
             self.draw()
             self.clock.tick(30)
 
@@ -101,4 +101,5 @@ if __name__ == '__main__':
     pygame.display.set_caption('Bow Man')
 
     game = CustomizationScene(screen)
-    game.run()
+    settings = game.run()
+    print(settings)
