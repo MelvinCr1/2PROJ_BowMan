@@ -1,5 +1,3 @@
-# mainScene.py
-
 import pygame
 import sys
 import os
@@ -15,7 +13,7 @@ class MainScene:
 
         # Chemin absolu vers le dossier assets depuis le répertoire principal
         base_path = os.path.dirname(os.path.abspath(__file__))
-        assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
+        assets_path = os.path.join(base_path, '../assets/')
 
         # Charger l'image de fond
         self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
@@ -23,7 +21,7 @@ class MainScene:
         # Redimensionner l'image de fond pour qu'elle remplisse l'écran
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
-        # Charger les images des boutons et les redimensionner
+        # Chargement des images des boutons et les redimensionner
         button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
         self.play_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/play.png')).convert_alpha()
         self.play_button_img = pygame.transform.scale(self.play_button_img, (int(self.play_button_img.get_width() * button_scale), int(self.play_button_img.get_height() * button_scale)))
@@ -55,7 +53,7 @@ class MainScene:
 
         # Charger et jouer la musique de fond en boucle
         background_music = pygame.mixer.Sound(os.path.join(assets_path, 'sounds/background_music.mp3'))
-        background_music.play(loops=-1)  # -1 pour jouer en boucle indéfiniment
+        background_music.play(loops=-1)  # -1 -> jouer en boucle indéfiniment
 
         running = True
         while running:
@@ -78,8 +76,8 @@ class MainScene:
                             game = CustomizationScene(self.screen)  # Choisir le fond souhaité
                             game.run()
                         elif self.options_button_rect.collidepoint(pos):
-                            options_menu = OptionsScene(self.screen, background_music=background_music)  # Créer une instance du menu d'options
-                            options_menu.run()  # Utiliser la méthode run() au lieu de show()
+                            options_menu = OptionsScene(self.screen, background_music=background_music)  # Création instance du menu d'options
+                            options_menu.run()
                         elif self.quit_button_rect.collidepoint(pos):
                             print("Fermeture du jeu...")
                             pygame.quit()
