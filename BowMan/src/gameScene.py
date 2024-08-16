@@ -48,6 +48,8 @@ class GameScene:
         self.shoot_power = 20
         self.shoot_angle = 45
 
+        self.start_time = pygame.time.get_ticks()
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -151,11 +153,21 @@ class GameScene:
         for arrow in self.arrows:
             arrow.draw(self.camera_x)
 
+        # Power / angle texts
         font = pygame.font.Font(None, 36)
         power_text = font.render(f"Power: {self.shoot_power} (< >)", True, (255, 255, 255))
         angle_text = font.render(f"Angle: {self.shoot_angle} (^ v️)", True, (255, 255, 255))
         self.screen.blit(power_text, (10, 10))
         self.screen.blit(angle_text, (10, 50))
+
+        # Timer
+        elapsed_time_ms = pygame.time.get_ticks() - self.start_time
+        seconds = (elapsed_time_ms // 1000) % 60
+        minutes = (elapsed_time_ms // 60000) % 60
+        hours = (elapsed_time_ms // 3600000) % 24
+        timer_text = font.render(f"{hours:02}:{minutes:02}:{seconds:02}", True, (255, 255, 255))
+        timer_rect = timer_text.get_rect(center=(self.width // 2, 30))  # Center horizontally, 30 pixels from the top
+        self.screen.blit(timer_text, timer_rect.topleft)
 
         pygame.display.flip()
 

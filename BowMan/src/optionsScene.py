@@ -1,5 +1,3 @@
-# optionsScene.py
-
 import pygame
 import sys
 import os
@@ -20,7 +18,6 @@ class OptionsScene:
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Charger les images des boutons
-        self.home_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/home.png')).convert_alpha()
         self.music_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/music.png')).convert_alpha()
         self.audio_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/audio.png')).convert_alpha()
         self.questionmark_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/questionmark.png')).convert_alpha()
@@ -32,7 +29,6 @@ class OptionsScene:
 
         # Redimensionner les images des boutons si nécessaire
         button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
-        self.home_button_img = pygame.transform.scale(self.home_button_img, (int(self.home_button_img.get_width() * button_scale), int(self.home_button_img.get_height() * button_scale)))
         self.music_button_img = pygame.transform.scale(self.music_button_img, (int(self.music_button_img.get_width() * button_scale), int(self.music_button_img.get_height() * button_scale)))
         self.audio_button_img = pygame.transform.scale(self.audio_button_img, (int(self.audio_button_img.get_width() * button_scale), int(self.audio_button_img.get_height() * button_scale)))
         self.questionmark_button_img = pygame.transform.scale(self.questionmark_button_img, (int(self.questionmark_button_img.get_width() * button_scale), int(self.questionmark_button_img.get_height() * button_scale)))
@@ -40,18 +36,22 @@ class OptionsScene:
         self.audio_button_img_red = pygame.transform.scale(self.audio_button_img_red, (int(self.audio_button_img_red.get_width() * button_scale), int(self.audio_button_img_red.get_height() * button_scale)))
         self.music_button_img_red = pygame.transform.scale(self.music_button_img_red, (int(self.music_button_img_red.get_width() * button_scale), int(self.music_button_img_red.get_height() * button_scale)))
 
+        # Charger l'image du bouton "Retour"
+        self.back_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/back.png')).convert_alpha()
+        self.back_button_img = pygame.transform.scale(self.back_button_img, (50, 50))  # Assurez-vous que la taille est correcte
+        self.back_button_rect = self.back_button_img.get_rect(topleft=(10, 10))  # Position en haut à gauche
+
         # Définir les rectangles de collision pour chaque bouton
-        button_width, button_height = self.home_button_img.get_size()
+        button_width, button_height = self.music_button_img.get_size()
         button_spacing = 20  # Espacement vertical entre les boutons
-        total_height = button_height * 5 + button_spacing * 4  # Hauteur totale occupée par les boutons
+        total_height = button_height * 4 + button_spacing * 3  # Hauteur totale occupée par les boutons
 
         start_y = (self.height - total_height) // 2  # Position verticale de départ pour centrer les boutons
 
-        self.home_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y, button_width, button_height)
-        self.music_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + (button_height + button_spacing), button_width, button_height)
-        self.audio_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + 2 * (button_height + button_spacing), button_width, button_height)
-        self.questionmark_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + 3 * (button_height + button_spacing), button_width, button_height)
-        self.info_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + 4 * (button_height + button_spacing), button_width, button_height)
+        self.music_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y, button_width, button_height)
+        self.audio_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + (button_height + button_spacing), button_width, button_height)
+        self.questionmark_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + 2 * (button_height + button_spacing), button_width, button_height)
+        self.info_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + 3 * (button_height + button_spacing), button_width, button_height)
 
         # Attributs d'état pour les boutons
         self.audio_active = False
@@ -81,9 +81,9 @@ class OptionsScene:
             else:
                 self.screen.blit(self.music_button_img, self.music_button_rect)
 
-            self.screen.blit(self.home_button_img, self.home_button_rect)
             self.screen.blit(self.questionmark_button_img, self.questionmark_button_rect)
             self.screen.blit(self.info_button_img, self.info_button_rect)
+            self.screen.blit(self.back_button_img, self.back_button_rect)
 
             # Gestion des événements
             for event in pygame.event.get():
@@ -93,7 +93,7 @@ class OptionsScene:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
-                        if self.home_button_rect.collidepoint(pos):
+                        if self.back_button_rect.collidepoint(pos):
                             print("Retour au menu principal...")
                             return  # Retourner au menu principal
                         elif self.audio_button_rect.collidepoint(pos):

@@ -12,24 +12,24 @@ class MainScene:
         self.clock = pygame.time.Clock()
 
         # Chemin absolu vers le dossier assets depuis le répertoire principal
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        assets_path = os.path.join(base_path, '../assets/')
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        self.assets_path = os.path.join(self.base_path, '../assets/')
 
         # Charger l'image de fond
-        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
+        self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
 
         # Redimensionner l'image de fond pour qu'elle remplisse l'écran
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Chargement des images des boutons et les redimensionner
         button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
-        self.play_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/play.png')).convert_alpha()
+        self.play_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/play.png')).convert_alpha()
         self.play_button_img = pygame.transform.scale(self.play_button_img, (int(self.play_button_img.get_width() * button_scale), int(self.play_button_img.get_height() * button_scale)))
 
-        self.options_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/options.png')).convert_alpha()
+        self.options_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/options.png')).convert_alpha()
         self.options_button_img = pygame.transform.scale(self.options_button_img, (int(self.options_button_img.get_width() * button_scale), int(self.options_button_img.get_height() * button_scale)))
 
-        self.quit_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/quit.png')).convert_alpha()
+        self.quit_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/quit.png')).convert_alpha()
         self.quit_button_img = pygame.transform.scale(self.quit_button_img, (int(self.quit_button_img.get_width() * button_scale), int(self.quit_button_img.get_height() * button_scale)))
 
         # Positionner les boutons
@@ -43,23 +43,18 @@ class MainScene:
         self.options_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + button_height + button_spacing, button_width, button_height)
         self.quit_button_rect = pygame.Rect(self.width // 2 - button_width // 2, start_y + (button_height + button_spacing) * 2, button_width, button_height)
 
+        # Chemin vers le dossier assets/sounds
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        self.assets_path = os.path.join(self.base_path, '../assets/')
+
     def run(self):
-        # Initialisation de pygame.mixer pour gérer les effets sonores et la musique
         pygame.mixer.init()
-
-        # Chemin absolu vers le dossier assets/sounds
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
-
-        # Charger et jouer la musique de fond en boucle
-        background_music = pygame.mixer.Sound(os.path.join(assets_path, 'sounds/background_music.mp3'))
+        background_music = pygame.mixer.Sound(os.path.join(self.assets_path, 'sounds/background_music.mp3'))
         background_music.play(loops=-1)  # -1 -> jouer en boucle indéfiniment
 
         running = True
         while running:
-            self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
-
-            # Dessiner les boutons
+            self.screen.blit(self.background_img, (0, 0))
             self.screen.blit(self.play_button_img, self.play_button_rect)
             self.screen.blit(self.options_button_img, self.options_button_rect)
             self.screen.blit(self.quit_button_img, self.quit_button_rect)
@@ -73,8 +68,13 @@ class MainScene:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
-                            game = CustomizationScene(self.screen)  # Choisir le fond souhaité
-                            game.run()
+                            customization_scene = CustomizationScene(self.screen)
+                            result = customization_scene.run()
+                            if result is None or result.get('action') == 'main_menu':
+                                continue
+                            elif result.get('action') == 'start_game':
+                                game_scene = GameScene(self.screen, result)
+                                game_scene.run()
                         elif self.options_button_rect.collidepoint(pos):
                             options_menu = OptionsScene(self.screen, background_music=background_music)  # Création instance du menu d'options
                             options_menu.run()
