@@ -14,4 +14,8 @@ class Archer:
     def draw_health(self, camera_x):
         font = pygame.font.Font(None, 36)
         health_text = font.render(f"HP: {self.health}", True, (255, 255, 255))
-        self.screen.blit(health_text, (self.rect.x - camera_x, self.rect.y - 30))
+        
+        # Calculer la position du texte de la santé pour qu'il soit centré au-dessus de l'archer
+        health_text_rect = health_text.get_rect(midbottom=(self.rect.centerx - camera_x, self.rect.y - 10))
+        
+        self.screen.blit(health_text, health_text_rect.topleft)

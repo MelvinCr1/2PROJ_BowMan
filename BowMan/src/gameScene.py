@@ -28,8 +28,13 @@ class GameScene:
         self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds', settings["background"])).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.scene_width, self.scene_height))
 
+        # Ajuster la taille des archers
+        archer_scale_factor = 0.5  # Réduire la taille des archers à 50%
         archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters', settings["style"])).convert_alpha()
-        archer_img_left = pygame.transform.scale(archer_img_left, (200, 400))
+        archer_original_width, archer_original_height = archer_img_left.get_size()
+        archer_img_left = pygame.transform.scale(archer_img_left, 
+                                                  (int(archer_original_width * archer_scale_factor), 
+                                                   int(archer_original_height * archer_scale_factor)))
 
         archer_img_right = pygame.transform.flip(archer_img_left, True, False)
 
