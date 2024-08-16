@@ -9,6 +9,7 @@ from endGameScene import EndGameScene
 from gameLogic.arrow import Arrow
 from gameLogic.archer import Archer
 from gameLogic.obstacle import Obstacle
+from gameLogic.ai import AI  # Importer la classe IA
 
 class GameScene:
     def __init__(self, screen, settings):
@@ -22,6 +23,8 @@ class GameScene:
         self.scene_width, self.scene_height = 2400, 800
         self.screen = pygame.display.set_mode((self.width, self.height))
 
+        self.settings = settings
+
         self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds', settings["background"])).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.scene_width, self.scene_height))
 
@@ -32,6 +35,9 @@ class GameScene:
 
         self.archer_left = Archer(archer_img_left, 50, self.height // 2 - archer_img_left.get_height() // 2, self.screen)
         self.archer_right = Archer(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2, self.screen)
+
+        # Initialiser l'IA
+        self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2, self.screen)
 
         self.camera_x = 0
         self.camera_speed = 20
@@ -49,6 +55,9 @@ class GameScene:
         self.shoot_angle = 45
 
         self.start_time = pygame.time.get_ticks()
+
+        # Print le mode de jeu sélectionné
+        print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -142,11 +151,16 @@ class GameScene:
 
         self.check_collisions()
 
+        # Mettre à jour l'IA
+        if self.settings["play_mode"] == "IA":
+            self.ai.update(self.arrows)
+
     def draw(self):
         self.screen.blit(self.background_img, (-self.camera_x, 0))
 
         self.archer_left.draw(self.camera_x)
         self.archer_right.draw(self.camera_x)
+        self.ai.draw(self.camera_x)  # Dessiner l'IA
 
         self.obstacle.draw(self.camera_x)
 
@@ -173,7 +187,6 @@ class GameScene:
 
     def run(self):
         running = True
-
         while running:
             self.handle_events()
             
@@ -189,8 +202,8 @@ class GameScene:
                     options_menu = OptionsScene(self.screen)
                     options_menu.run()
                 elif action == "main_menu":
-                    from mainScene import MainScene
-                    main_menu = MainScene(self.screen)
+                    from mainScene import MainMenu
+                    main_menu = MainMenu(self.screen)
                     main_menu.run()
                     running = False
                 elif action == "quit":

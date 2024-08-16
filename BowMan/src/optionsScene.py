@@ -10,22 +10,22 @@ class OptionsScene:
         self.clock = pygame.time.Clock()
 
         # Chemin absolu vers le dossier assets depuis le répertoire principal
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        assets_path = os.path.join(base_path, '../assets/')  # Ajustez selon votre structure
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        self.assets_path = os.path.join(self.base_path, '../assets/')  # Ajustez selon votre structure
 
         # Charger l'image de fond pour le menu d'options
-        self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds/background1.jpg')).convert()
+        self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Charger les images des boutons
-        self.music_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/music.png')).convert_alpha()
-        self.audio_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/audio.png')).convert_alpha()
-        self.questionmark_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/questionmark.png')).convert_alpha()
-        self.info_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/info.png')).convert_alpha()
+        self.music_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/music.png')).convert_alpha()
+        self.audio_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/audio.png')).convert_alpha()
+        self.questionmark_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/questionmark.png')).convert_alpha()
+        self.info_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/info.png')).convert_alpha()
 
         # Charger les images alternatives des boutons
-        self.audio_button_img_red = pygame.image.load(os.path.join(assets_path, 'buttons/audio_red.png')).convert_alpha()
-        self.music_button_img_red = pygame.image.load(os.path.join(assets_path, 'buttons/music_red.png')).convert_alpha()
+        self.audio_button_img_red = pygame.image.load(os.path.join(self.assets_path, 'buttons/audio_red.png')).convert_alpha()
+        self.music_button_img_red = pygame.image.load(os.path.join(self.assets_path, 'buttons/music_red.png')).convert_alpha()
 
         # Redimensionner les images des boutons si nécessaire
         button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
@@ -37,7 +37,7 @@ class OptionsScene:
         self.music_button_img_red = pygame.transform.scale(self.music_button_img_red, (int(self.music_button_img_red.get_width() * button_scale), int(self.music_button_img_red.get_height() * button_scale)))
 
         # Charger l'image du bouton "Retour"
-        self.back_button_img = pygame.image.load(os.path.join(assets_path, 'buttons/back.png')).convert_alpha()
+        self.back_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/back.png')).convert_alpha()
         self.back_button_img = pygame.transform.scale(self.back_button_img, (50, 50))  # Assurez-vous que la taille est correcte
         self.back_button_rect = self.back_button_img.get_rect(topleft=(10, 10))  # Position en haut à gauche
 
@@ -115,4 +115,4 @@ class OptionsScene:
                             credits_menu.run()
 
             pygame.display.flip()
-            self.clock.tick(30)  # Limiter la vitesse de rafraîchissement à 30 FPS
+            self.clock.tick(30)
