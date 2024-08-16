@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 class EndGameScene:
     def __init__(self, screen, winner):
@@ -9,10 +10,15 @@ class EndGameScene:
         self.winner = winner  # Qui est le gagnant
 
         # Définir les couleurs
-        self.background_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
         self.button_color = (100, 100, 100)
         self.button_hover_color = (150, 150, 150)
+
+        # Charger l'image de fond
+        self.base_path = os.path.dirname(os.path.abspath(__file__))
+        self.assets_path = os.path.join(self.base_path, '../assets/')
+        self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
+        self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Charger les polices
         self.font = pygame.font.Font(None, 74)
@@ -32,7 +38,8 @@ class EndGameScene:
         running = True
 
         while running:
-            self.screen.fill(self.background_color)
+            # Afficher l'image de fond
+            self.screen.blit(self.background_img, (0, 0))
 
             # Afficher le texte du gagnant
             self.draw_text(f"{self.winner} a gagné!", self.font, self.text_color, self.screen, self.width // 2, self.height // 2 - 100)
