@@ -180,8 +180,11 @@ class GameScene:
 
         self.archer_left.draw(self.camera_x)
         self.archer_right.draw(self.camera_x)
-        self.ai.draw(self.camera_x)  # Dessiner l'IA
-
+        
+        # Dessiner l'IA et sa vie seulement si le mode de jeu est IA
+        if self.settings.get("play_mode") == "IA":
+            self.ai.draw(self.camera_x)
+        
         self.obstacle.draw(self.camera_x)
 
         for arrow in self.arrows:
