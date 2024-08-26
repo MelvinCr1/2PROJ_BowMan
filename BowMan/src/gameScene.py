@@ -10,6 +10,7 @@ from gameLogic.arrow import Arrow
 from gameLogic.archer import Archer
 from gameLogic.obstacle import Obstacle
 from gameLogic.ai import AI  # Importer la classe IA
+from gameLogic.serverStatus import ServerStatus
 
 class GameScene:
     def __init__(self, screen, settings):
@@ -60,6 +61,10 @@ class GameScene:
         self.shoot_angle = 45
 
         self.start_time = pygame.time.get_ticks()
+
+        if settings.get("play_mode") == "multiplayer":
+            self.server_status = ServerStatus(screen)
+            self.server_status.update_status("Server Unknown", ["192.168.1.1", "192.168.1.2"])
 
         # Print le mode de jeu sélectionné
         print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
@@ -160,6 +165,16 @@ class GameScene:
         if self.settings["play_mode"] == "IA":
             self.ai.update(self.arrows)
 
+    def draw_server_status_indicator(self):
+    # Définir la couleur du cercle en fonction du statut du serveur
+        if self.settings.get("play_mode") == "multiplayer":
+            if self.server_status.is_running:
+                color = (0, 255, 0)  # Vert pour serveur actif
+            else:
+                color = (255, 0, 0)  # Rouge pour serveur inactif
+            pygame.draw.circle(self.screen, color, (self.width - 30, 30), 10)
+
+
     def draw(self):
         self.screen.blit(self.background_img, (-self.camera_x, 0))
 
@@ -171,6 +186,11 @@ class GameScene:
 
         for arrow in self.arrows:
             arrow.draw(self.camera_x)
+
+        # Dessiner le statut du serveur
+        if self.settings.get("play_mode") == "multiplayer":
+            self.draw_server_status_indicator()
+            self.server_status.draw()  # Dessiner le statut du serveur après l'indicateur
 
         # Power / angle texts
         font = pygame.font.Font(None, 36)
@@ -189,6 +209,8 @@ class GameScene:
         self.screen.blit(timer_text, timer_rect.topleft)
 
         pygame.display.flip()
+
+
 
     def run(self):
         running = True
