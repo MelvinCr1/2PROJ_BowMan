@@ -14,8 +14,8 @@ class Arrow:
         
         # Paramètres de la flèche
         self.length = 30
-        self.color = (139, 69, 19)  # Couleur marron pour la flèche
-        self.tip_color = (0, 255, 0)  # Couleur verte pour la pointe de la flèche
+        self.color = (139, 69, 19)  # flèche
+        self.tip_color = (0, 255, 0)  # pointe de la flèche
 
     def update(self):
         self.x += self.x_velocity
@@ -49,6 +49,4 @@ class Arrow:
         tip2_y = end_y - arrow_tip_length * math.sin(math.radians(self.angle) - arrow_tip_angle)
 
         # Dessiner la pointe de la flèche
-        pygame.draw.polygon(self.screen, self.tip_color, [(int(end_x - camera_x), int(end_y)),
-                                                          (int(tip1_x - camera_x), int(tip1_y)),
-                                                          (int(tip2_x - camera_x), int(tip2_y))])
+        pygame.draw.polygon(self.screen, self.tip_color, [(int(end_x - camera_x), int(end_y)),(int(tip1_x - camera_x), int(tip1_y)),(int(tip2_x - camera_x), int(tip2_y))])
