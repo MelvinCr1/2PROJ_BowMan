@@ -22,8 +22,11 @@ class Archer:
 
         # Dessiner le fond de la barre de vie
         pygame.draw.rect(self.screen, (0, 0, 0), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
-        # Dessiner la barre de vie en couleur
-        health_percentage = max(self.health / 100.0, 0)
+        
+        # Calculer le pourcentage de vie restant
+        health_percentage = max(self.health / 30.0, 0)  # Assurez-vous que la division ne dépasse pas 1
+        
+        # Dessiner la barre de vie en couleur, s'assurer que la largeur ne dépasse pas la largeur de la barre de vie
         pygame.draw.rect(self.screen, (255, 0, 0), (health_bar_x, health_bar_y, health_bar_width * health_percentage, health_bar_height))
 
         # Dessiner le texte de la vie
