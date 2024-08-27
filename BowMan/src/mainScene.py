@@ -76,10 +76,9 @@ class MainScene:
                                 game_scene = GameScene(self.screen, result)
                                 game_scene.run()
                         elif self.options_button_rect.collidepoint(pos):
-                            options_menu = OptionsScene(self.screen, background_music=background_music)  # Création instance du menu d'options
+                            options_menu = OptionsScene(self.screen, background_music=background_music)
                             options_menu.run()
                         elif self.quit_button_rect.collidepoint(pos):
-                            print("Fermeture du jeu...")
                             pygame.quit()
                             sys.exit()
 
