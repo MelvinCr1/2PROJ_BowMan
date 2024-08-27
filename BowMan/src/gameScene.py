@@ -66,6 +66,9 @@ class GameScene:
             self.server_status = ServerStatus(screen)
             self.server_status.update_status("Server Unknown", ["Unknown", "Unknown"])
 
+        # Couleur de la pointe de la flèche
+        self.arrow_color = settings.get("arrow_color", (0, 255, 0))  # Vert par défaut
+
         # Print le mode de jeu sélectionné
         print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
 
@@ -83,11 +86,11 @@ class GameScene:
                     y_velocity = -self.shoot_power * math.sin(angle_radians)
 
                     if self.turn == 'left':
-                        new_arrow = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity)
+                        new_arrow = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'right'
                     elif self.turn == 'right':
-                        new_arrow = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity)
+                        new_arrow = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'left'
                 elif event.key == pygame.K_o:
@@ -166,14 +169,13 @@ class GameScene:
             self.ai.update(self.arrows)
 
     def draw_server_status_indicator(self):
-    # Définir la couleur du cercle en fonction du statut du serveur
+        # Définir la couleur du cercle en fonction du statut du serveur
         if self.settings.get("play_mode") == "multiplayer":
             if self.server_status.is_running:
                 color = (0, 255, 0)  # Vert pour serveur actif
             else:
                 color = (255, 0, 0)  # Rouge pour serveur inactif
             pygame.draw.circle(self.screen, color, (self.width - 30, 30), 10)
-
 
     def draw(self):
         self.screen.blit(self.background_img, (-self.camera_x, 0))
@@ -213,8 +215,6 @@ class GameScene:
 
         pygame.display.flip()
 
-
-
     def run(self):
         running = True
         while running:
@@ -247,6 +247,11 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((1600, 800))
     pygame.display.set_caption('Bow Man')
 
-    settings = {"background": "background1.jpg", "style": "archer.png", "play_mode": "local"}  # Valeurs par défaut
+    settings = {
+        "background": "background1.jpg",
+        "style": "archer.png",
+        "play_mode": "local",
+        "arrow_color": (0, 255, 0)  # Couleur de la pointe par défaut
+    }
     game = GameScene(screen, settings)
     game.run()
