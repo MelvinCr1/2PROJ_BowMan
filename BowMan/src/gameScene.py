@@ -64,7 +64,7 @@ class GameScene:
 
         if settings.get("play_mode") == "multiplayer":
             self.server_status = ServerStatus(screen)
-            self.server_status.update_status("Server Unknown", ["192.168.1.1", "192.168.1.2"])
+            self.server_status.update_status("Server Unknown", ["Unknown", "Unknown"])
 
         # Print le mode de jeu sélectionné
         print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
