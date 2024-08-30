@@ -82,8 +82,8 @@ class GameScene:
             self.server_status = ServerStatus(screen)
             self.server_status.update_status("Server Unknown", ["Unknown", "Unknown"])
 
-        # Couleur de la pointe de la flèche
         self.arrow_color = settings.get("arrow_color", (0, 255, 0))  # Vert par défaut
+        self.add_obstacle = settings.get("add_obstacle", False)  # Par défaut, pas d'obstacle
 
         # Print le mode de jeu sélectionné
         print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
@@ -95,63 +95,43 @@ class GameScene:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.paused = not self.paused
-                elif event.key == pygame.K_a and not self.paused:
-                    angle_radians = math.radians(self.shoot_angle)
-                    x_velocity = self.shoot_power * math.cos(angle_radians)
-                    y_velocity = -self.shoot_power * math.sin(angle_radians)
-
-                    if self.turn == 'left':
-                        new_arrow = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery, x_velocity, y_velocity, color=self.arrow_color)
-                        self.arrows.append(new_arrow)
-                        self.turn = 'right'
-                    elif self.turn == 'right':
-                        new_arrow = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery, -x_velocity, y_velocity, color=self.arrow_color)
-                        self.arrows.append(new_arrow)
-                        self.turn = 'left'
+                    return {"action": "main_menu"}
+                elif event.key == pygame.K_RETURN:
+                    return {
+                        "action": "start_game",
+                        "background": self.selected_background,
+                        "style": self.selected_style,
+                        "play_mode": self.play_mode,
+                        "arrow_color": self.selected_arrow_color,
+                        "add_obstacle": self.obstacle_option  # Passer l'option d'ajout d'obstacle
+                    }
+                elif event.key == pygame.K_b:
+                    current_index = self.background_options.index(self.selected_background)
+                    self.selected_background = self.background_options[(current_index + 1) % len(self.background_options)]
+                elif event.key == pygame.K_s:
+                    current_index = self.style_options.index(self.selected_style)
+                    self.selected_style = self.style_options[(current_index + 1) % len(self.style_options)]
+                elif event.key == pygame.K_m:
+                    # Changer le mode de jeu
+                    self.current_mode_index = (self.current_mode_index + 1) % len(self.play_modes)
+                    self.play_mode = self.play_modes[self.current_mode_index]
+                elif event.key == pygame.K_c:
+                    # Changer la couleur de la tige de la flèche
+                    current_index = self.arrow_color_names.index(self.selected_arrow_color_name)
+                    self.selected_arrow_color_name = self.arrow_color_names[(current_index + 1) % len(self.arrow_color_names)]
+                    self.selected_arrow_color = self.arrow_colors[self.selected_arrow_color_name]
                 elif event.key == pygame.K_o:
-                # Activer ou désactiver l'obstacle
-                    if self.obstacle is None:
-                        # Ajouter un obstacle
-                        self.obstacle = Obstacle(self.screen, x=self.scene_width // 2 - 200, y=self.scene_height - 600, width=400, height=600)
-                    else:
-                        # Retirer l'obstacle
-                        self.obstacle = None
-                elif event.key == pygame.K_UP:
-                    self.shoot_angle += 1
-                    if self.shoot_angle > 90:
-                        self.shoot_angle = 90
-                elif event.key == pygame.K_DOWN:
-                    self.shoot_angle -= 1
-                    if self.shoot_angle < 0:
-                        self.shoot_angle = 0
-                elif event.key == pygame.K_RIGHT:
-                    self.shoot_power += 1
-                    if self.shoot_power > 100:
-                        self.shoot_power = 100
-                elif event.key == pygame.K_LEFT:
-                    self.shoot_power -= 1
-                    if self.shoot_power < 1:
-                        self.shoot_power = 1
+                    # Basculer l'option d'obstacle
+                    self.obstacle_option = not self.obstacle_option
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and not self.paused:
-                    self.move_camera_right = not self.move_camera_right
-                elif self.paused:
-                    action = self.pause_menu.handle_events()
-                    if action == "continue":
-                        self.paused = False
-                    elif action == "options":
-                        options_menu = OptionsScene(self.screen)
-                        options_menu.run()
-                    elif action == "main_menu":
-                        from mainScene import MainMenu
-                        main_menu = MainMenu(self.screen)
-                        main_menu.run()
-                        pygame.quit()
-                        sys.exit()
-                    elif action == "quit":
-                        pygame.quit()
-                        sys.exit()
+                if event.button == 1:  # Left click
+                    if self.checkbox_rect.collidepoint(event.pos):
+                        # Inverser l'état de la case à cocher lorsqu'on clique dessus
+                        self.obstacle_option = not self.obstacle_option
+                    elif self.back_button_rect.collidepoint(event.pos):
+                        return {"action": "main_menu"}  # Retour au menu principal
+        return None
+
 
     def check_collisions(self):
         for arrow in self.arrows:
@@ -217,8 +197,8 @@ class GameScene:
             self.ai.draw(self.camera_x)
         
         # Dessiner l'obstacle seulement s'il est présent
-        if self.obstacle is not None:
-            self.obstacle.draw(self.camera_x)
+        if self.add_obstacle:
+            self.draw_obstacle()
 
         for arrow in self.arrows:
             arrow.draw(self.camera_x)
