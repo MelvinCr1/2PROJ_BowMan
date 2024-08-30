@@ -26,6 +26,7 @@ class GameScene:
         self.screen = pygame.display.set_mode((self.width, self.height))
 
         self.settings = settings
+        self.obstacle = None
 
         self.background_img = pygame.image.load(os.path.join(assets_path, 'backgrounds', settings["background"])).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.scene_width, self.scene_height))
@@ -55,7 +56,6 @@ class GameScene:
         self.archer_left = Archer(archer_img_left, archer_left_x, custom_y, self.screen)
         self.archer_right = Archer(archer_img_right, archer_right_x, custom_y, self.screen)
 
-        # Initialiser 
 
         # Initialiser l'IA
         self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2, self.screen)
@@ -68,7 +68,8 @@ class GameScene:
         self.pause_menu = PauseScene(screen)
 
         self.arrows = []
-        self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 50, 200, 400)
+        self.obstacle = Obstacle(self.screen, x=self.scene_width // 2 - 200, y=self.scene_height - 600, width=400, height=600)
+
 
         self.turn = 'left'
 
@@ -109,7 +110,13 @@ class GameScene:
                         self.arrows.append(new_arrow)
                         self.turn = 'left'
                 elif event.key == pygame.K_o:
-                    self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 150, 200, 800)
+                # Activer ou désactiver l'obstacle
+                    if self.obstacle is None:
+                        # Ajouter un obstacle
+                        self.obstacle = Obstacle(self.screen, x=self.scene_width // 2 - 200, y=self.scene_height - 600, width=400, height=600)
+                    else:
+                        # Retirer l'obstacle
+                        self.obstacle = None
                 elif event.key == pygame.K_UP:
                     self.shoot_angle += 1
                     if self.shoot_angle > 90:
@@ -165,7 +172,7 @@ class GameScene:
                     end_game_menu.run()
 
             # Collision avec l'obstacle
-            elif (self.obstacle.rect1.collidepoint(arrow.x, arrow.y) or self.obstacle.rect2.collidepoint(arrow.x, arrow.y)):
+            if self.obstacle.contains_point(arrow.x, arrow.y):
                 self.arrows.remove(arrow)
 
 
@@ -209,7 +216,9 @@ class GameScene:
         if self.settings.get("play_mode") == "IA":
             self.ai.draw(self.camera_x)
         
-        self.obstacle.draw(self.camera_x)
+        # Dessiner l'obstacle seulement s'il est présent
+        if self.obstacle is not None:
+            self.obstacle.draw(self.camera_x)
 
         for arrow in self.arrows:
             arrow.draw(self.camera_x)
