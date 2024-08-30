@@ -1,5 +1,6 @@
 from pygame.locals import *
 import pygame
+import random
 import sys
 import os
 import math
@@ -33,14 +34,28 @@ class GameScene:
         archer_scale_factor = 0.5  # Réduire la taille des archers à 50%
         archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters', settings["style"])).convert_alpha()
         archer_original_width, archer_original_height = archer_img_left.get_size()
-        archer_img_left = pygame.transform.scale(archer_img_left, 
-                                                  (int(archer_original_width * archer_scale_factor), 
-                                                   int(archer_original_height * archer_scale_factor)))
-
+        archer_img_left = pygame.transform.scale(archer_img_left, (int(archer_original_width * archer_scale_factor), int(archer_original_height * archer_scale_factor)))
         archer_img_right = pygame.transform.flip(archer_img_left, True, False)
-
         self.archer_left = Archer(archer_img_left, 50, self.height // 2 - archer_img_left.get_height() // 2, self.screen)
         self.archer_right = Archer(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2, self.screen)
+
+        # Hauteur pour tous les archers
+        custom_y = 450
+
+        # Distance minimale pour s'assurer que les archers ne se voient pas
+        min_distance = 600
+
+        # Position des archers dans leurs moitiés respectives avec une distance minimale
+        max_left_x = (self.scene_width // 2) - min_distance - archer_img_left.get_width()
+        min_right_x = (self.scene_width // 2) + min_distance
+
+        archer_left_x = random.randint(50, max_left_x)  # Gauche
+        archer_right_x = random.randint(min_right_x, self.scene_width - 200)  # Droite
+
+        self.archer_left = Archer(archer_img_left, archer_left_x, custom_y, self.screen)
+        self.archer_right = Archer(archer_img_right, archer_right_x, custom_y, self.screen)
+
+        # Initialiser 
 
         # Initialiser l'IA
         self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2, self.screen)
@@ -133,19 +148,26 @@ class GameScene:
 
     def check_collisions(self):
         for arrow in self.arrows:
-            if arrow.x < self.archer_left.rect.right and arrow.x > self.archer_left.rect.left and arrow.y < self.archer_left.rect.bottom and arrow.y > self.archer_left.rect.top:
+            # Collision avec l'archer gauche
+            if (self.archer_left.rect.left < arrow.x < self.archer_left.rect.right and self.archer_left.rect.top < arrow.y < self.archer_left.rect.bottom):
                 self.archer_left.health -= arrow.damage
                 self.arrows.remove(arrow)
                 if self.archer_left.health <= 0:
                     end_game_menu = EndGameScene(self.screen, "Archer Gauche")
                     end_game_menu.run()
 
-            elif arrow.x < self.archer_right.rect.right and arrow.x > self.archer_right.rect.left and arrow.y < self.archer_right.rect.bottom and arrow.y > self.archer_right.rect.top:
+            # Collision avec l'archer droit
+            elif (self.archer_right.rect.left < arrow.x < self.archer_right.rect.right and self.archer_right.rect.top < arrow.y < self.archer_right.rect.bottom):
                 self.archer_right.health -= arrow.damage
                 self.arrows.remove(arrow)
                 if self.archer_right.health <= 0:
                     end_game_menu = EndGameScene(self.screen, "Archer Droit")
                     end_game_menu.run()
+
+            # Collision avec l'obstacle
+            elif (self.obstacle.rect1.collidepoint(arrow.x, arrow.y) or self.obstacle.rect2.collidepoint(arrow.x, arrow.y)):
+                self.arrows.remove(arrow)
+
 
     def update(self):
         if self.arrows:
