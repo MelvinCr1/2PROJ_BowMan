@@ -119,9 +119,6 @@ class GameScene:
                                           -x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'left'
-                elif event.key == pygame.K_o:
-                    self.obstacle = Obstacle(self.screen, self.scene_width // 2 - 100, self.scene_height - 150, 200,
-                                             800)
                 elif event.key == pygame.K_UP:
                     self.shoot_angle += 1
                     if self.shoot_angle > 90:
