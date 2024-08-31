@@ -20,6 +20,9 @@ class Obstacle:
         # Définir les points pour dessiner un rocher irrégulier
         self.points = self.generate_random_points()
 
+        # Définir les collision
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
     def generate_random_points(self):
         num_points = 7  # Nombre de points pour dessiner le rocher
         points = []

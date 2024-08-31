@@ -148,8 +148,8 @@ class CustomizationScene:
                         "background": self.selected_background, 
                         "style": self.selected_style, 
                         "play_mode": self.play_mode,
-                        "arrow_color": self.selected_arrow_color,  # Passer la couleur de la tige de la flèche
-                        "add_obstacle": self.obstacle_option  # Passer l'option d'ajout d'obstacle
+                        "arrow_color": self.selected_arrow_color,
+                        "add_obstacle": self.obstacle_option
                     }
                 elif event.key == pygame.K_b:
                     current_index = self.background_options.index(self.selected_background)
@@ -187,12 +187,12 @@ class CustomizationScene:
                         "background": result["background"],
                         "style": result["style"],
                         "play_mode": result["play_mode"],
-                        "arrow_color": result["arrow_color"],  # Passer la couleur de la tige de la flèche
-                        "add_obstacle": result["add_obstacle"]  # Passer l'option d'ajout d'obstacle
+                        "arrow_color": result["arrow_color"],
+                        "add_obstacle": result["add_obstacle"]
                     })
                     game.run()
                 elif result["action"] == "main_menu":
-                    return  # Retourne au menu principal en terminant la fonction run
+                    return
             self.draw()
             self.clock.tick(30)
 
