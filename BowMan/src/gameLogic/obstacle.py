@@ -4,36 +4,35 @@ import random
 class Obstacle:
     def __init__(self, screen, x, y, width, height):
         self.screen = screen
-        self.color = (100, 100, 100)  # Couleur grise pour le rocher
+        self.color = (100, 100, 100)
         self.x = x
         self.y = y
         self.width = width
         self.height = height
 
-        # Assurer que l'obstacle a au moins 400 de largeur et 600 de hauteur
         self.width = max(width, 400)
         self.height = max(height, 600)
 
-        # Positionner l'obstacle pour qu'il touche le sol
+        # Position de l'obstacle pour qu'il touche le sol
         self.y = self.screen.get_height() - self.height
 
-        # Définir les points pour dessiner un rocher irrégulier
+        # Points pour dessiner un rocher irrégulier
         self.points = self.generate_random_points()
 
-        # Définir les collision
+        # Collision
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def generate_random_points(self):
         num_points = 7  # Nombre de points pour dessiner le rocher
         points = []
 
-        # Générer des points avec des marges pour assurer une taille minimale
+        # Génération des points / marges pour assurer une taille minimale
         for _ in range(num_points):
             px = self.x + random.uniform(0, self.width)
             py = self.y + random.uniform(0, self.height)
             points.append((px, py))
 
-        # Utiliser un algorithme de convex hull pour générer une forme convexe
+        # algorithme de convex hull pour générer une forme convexe
         return self.convex_hull(points)
 
     def convex_hull(self, points):
@@ -63,7 +62,7 @@ class Obstacle:
         # Ajuster les points en fonction de la position de la caméra
         adjusted_points = [(px - camera_x, py) for px, py in self.points]
         
-        # Dessiner le polygone qui représente le rocher
+        # Polygone qui représente le rocher
         pygame.draw.polygon(self.screen, self.color, adjusted_points)
 
     def contains_point(self, x, y):

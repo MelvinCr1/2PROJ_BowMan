@@ -7,24 +7,24 @@ class EndGameScene:
         self.screen = screen
         self.width, self.height = screen.get_size()
         self.clock = pygame.time.Clock()
-        self.winner = winner  # Qui est le gagnant
+        self.winner = winner
 
-        # Définir les couleurs
+        # couleurs
         self.text_color = (255, 255, 255)
         self.button_color = (100, 100, 100)
         self.button_hover_color = (150, 150, 150)
 
-        # Charger l'image de fond
+        # image de fond
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.assets_path = os.path.join(self.base_path, '../assets/')
         self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
-        # Charger les polices
+        # polices
         self.font = pygame.font.Font(None, 74)
         self.button_font = pygame.font.Font(None, 36)
 
-        # Définir les boutons
+        # boutons
         self.play_again_button = pygame.Rect(self.width // 2 - 100, self.height // 2, 200, 50)
         self.quit_button = pygame.Rect(self.width // 2 - 100, self.height // 2 + 70, 200, 50)
 

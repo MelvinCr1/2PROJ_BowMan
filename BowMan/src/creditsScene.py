@@ -11,11 +11,11 @@ class CreditsScene:
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.assets_path = os.path.join(self.base_path, '../assets/')
 
-        # Charger l'image de fond
+        # Chargement image de fond
         self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
-        # Charger la police
+        # Chargement police
         self.credits_font = pygame.font.Font(None, 36)
 
         self.credits_text = [
@@ -30,9 +30,8 @@ class CreditsScene:
             "© 2024 Melvin C. All Rights Reserved."
         ]
 
-        # Calcul de la position pour centrer le texte
-        text_height = len(self.credits_text) * 36  # Hauteur totale du texte en pixels
-        start_y = (self.height - text_height) // 2  # Position verticale de départ pour centrer le texte
+        text_height = len(self.credits_text) * 36  # Hauteur texte
+        start_y = (self.height - text_height) // 2  # Position verticale texte
 
         self.text_surfaces = []
         for line in self.credits_text:
@@ -40,7 +39,7 @@ class CreditsScene:
             text_width = text_surface.get_width()
             x = (self.width - text_width) // 2
             self.text_surfaces.append((text_surface, (x, start_y)))
-            start_y += 36  # Espacement vertical entre les lignes de texte
+            start_y += 36  # Espacement entre les lignes
 
         # Bouton "Retour"
         self.back_button_img = self.load_image(os.path.join(self.assets_path, 'buttons', 'back.png'), (50, 50))
@@ -73,11 +72,10 @@ class CreditsScene:
                     if event.button == 1:  # Bouton gauche de la souris
                         pos = pygame.mouse.get_pos()
                         if self.back_button_rect.collidepoint(pos):
-                            return  # Retourner au menu des options
+                            return
 
             pygame.display.flip()
             self.clock.tick(30)
-
 
 if __name__ == '__main__':
     pygame.init()

@@ -1,4 +1,3 @@
-# serverStatus.py
 import pygame
 import socket
 
@@ -15,13 +14,9 @@ class ServerStatus:
         self.connected_ips = ips
 
     def draw(self):
-        # Définir la couleur du texte
         text_color = (255, 255, 255)
-        
-        # Obtenir la largeur et la hauteur de l'écran
         screen_width, screen_height = self.screen.get_size()
         
-        # Calculer les positions pour le texte en haut à droite
         y = 50
         status_text = self.font.render(self.server_status, True, text_color)
         status_rect = status_text.get_rect(topright=(screen_width - 10, y))

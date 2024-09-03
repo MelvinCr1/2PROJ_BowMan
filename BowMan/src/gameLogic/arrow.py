@@ -10,7 +10,6 @@ class Arrow:
         self.y_velocity = y_velocity
         self.gravity = 0.5
         self.damage = 10
-        self.shooter = None
         self.ground_level = self.screen.get_height() - 50  # Niveau du sol
         
         # Paramètres de la flèche
