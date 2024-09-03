@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import webbrowser
 from creditsScene import CreditsScene
 
 class OptionsScene:
@@ -9,26 +10,27 @@ class OptionsScene:
         self.width, self.height = screen.get_size()
         self.clock = pygame.time.Clock()
 
-        # Chemin absolu vers le dossier assets depuis le répertoire principal
+        # Chemin absolu vers le dossier assets et docs depuis le répertoire principal
         self.base_path = os.path.dirname(os.path.abspath(__file__))
-        self.assets_path = os.path.join(self.base_path, '../assets/')  # Ajustez selon votre structure
+        self.assets_path = os.path.join(self.base_path, '../assets/')
+        self.docs_path = os.path.join(self.base_path, '../docs/')
 
-        # Charger l'image de fond pour le menu d'options
+        # image de fond
         self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
-        # Charger les images des boutons
+        # images des boutons
         self.music_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/music.png')).convert_alpha()
         self.audio_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/audio.png')).convert_alpha()
         self.questionmark_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/questionmark.png')).convert_alpha()
         self.info_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/info.png')).convert_alpha()
 
-        # Charger les images alternatives des boutons
+        # images alternatives des boutons
         self.audio_button_img_red = pygame.image.load(os.path.join(self.assets_path, 'buttons/audio_red.png')).convert_alpha()
         self.music_button_img_red = pygame.image.load(os.path.join(self.assets_path, 'buttons/music_red.png')).convert_alpha()
 
-        # Redimensionner les images des boutons si nécessaire
-        button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
+        # Redimensionner les images des boutons
+        button_scale = 0.5
         self.music_button_img = pygame.transform.scale(self.music_button_img, (int(self.music_button_img.get_width() * button_scale), int(self.music_button_img.get_height() * button_scale)))
         self.audio_button_img = pygame.transform.scale(self.audio_button_img, (int(self.audio_button_img.get_width() * button_scale), int(self.audio_button_img.get_height() * button_scale)))
         self.questionmark_button_img = pygame.transform.scale(self.questionmark_button_img, (int(self.questionmark_button_img.get_width() * button_scale), int(self.questionmark_button_img.get_height() * button_scale)))
@@ -36,12 +38,12 @@ class OptionsScene:
         self.audio_button_img_red = pygame.transform.scale(self.audio_button_img_red, (int(self.audio_button_img_red.get_width() * button_scale), int(self.audio_button_img_red.get_height() * button_scale)))
         self.music_button_img_red = pygame.transform.scale(self.music_button_img_red, (int(self.music_button_img_red.get_width() * button_scale), int(self.music_button_img_red.get_height() * button_scale)))
 
-        # Charger l'image du bouton "Retour"
+        # bouton "Retour"
         self.back_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/back.png')).convert_alpha()
-        self.back_button_img = pygame.transform.scale(self.back_button_img, (50, 50))  # Assurez-vous que la taille est correcte
+        self.back_button_img = pygame.transform.scale(self.back_button_img, (50, 50))
         self.back_button_rect = self.back_button_img.get_rect(topleft=(10, 10))  # Position en haut à gauche
 
-        # Définir les rectangles de collision pour chaque bouton
+        # rectangles de collision pour chaque bouton
         button_width, button_height = self.music_button_img.get_size()
         button_spacing = 20  # Espacement vertical entre les boutons
         total_height = button_height * 4 + button_spacing * 3  # Hauteur totale occupée par les boutons
@@ -57,7 +59,7 @@ class OptionsScene:
         self.audio_active = False
         self.music_active = music_enabled
 
-        # Initialiser la musique de fond si activée
+        # Initialisation de la musique de fond si activée
         if self.music_active and background_music:
             self.background_music = background_music
             self.background_music.play(-1)  # Jouer la musique en boucle
@@ -68,9 +70,9 @@ class OptionsScene:
         running = True
 
         while running:
-            self.screen.blit(self.background_img, (0, 0))  # Afficher le fond à l'arrière-plan
+            self.screen.blit(self.background_img, (0, 0))
 
-            # Dessiner les boutons en fonction de leur état
+            # boutons en fonction de leur état
             if self.audio_active:
                 self.screen.blit(self.audio_button_img_red, self.audio_button_rect)
             else:
@@ -91,27 +93,30 @@ class OptionsScene:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # Bouton gauche de la souris
+                    if event.button == 1:
                         pos = pygame.mouse.get_pos()
                         if self.back_button_rect.collidepoint(pos):
-                            print("Retour au menu principal...")
-                            return  # Retourner au menu principal
+                            return
                         elif self.audio_button_rect.collidepoint(pos):
                             print("Gestion de l'audio...")
-                            self.audio_active = not self.audio_active  # Inverser l'état du bouton audio
+                            self.audio_active = not self.audio_active  # Inversement de l'état du bouton audio
                             # Implémentez la gestion de l'audio (à faire)
                         elif self.music_button_rect.collidepoint(pos):
                             print("Gestion de la musique...")
-                            self.music_active = not self.music_active  # Inverser l'état du bouton musique
+                            self.music_active = not self.music_active  # Inversement de l'état du bouton musique
                             if self.music_active and self.background_music:
                                 self.background_music.play(-1)  # Jouer la musique en boucle
                             else:
                                 pygame.mixer.music.stop()  # Arrêter la musique
                         elif self.questionmark_button_rect.collidepoint(pos):
                             print("Redirection vers la documentation utilisateur...")
-                            # Implémentez la redirection vers le document PDF (à faire)
+                            pdf_path = os.path.join(self.docs_path, 'documentation_utilisateur.pdf')
+                            if os.path.isfile(pdf_path):
+                                webbrowser.open(pdf_path)  # Ouvrir le fichier PDF dans le navigateur
+                            else:
+                                print("Le fichier PDF n'existe pas.")
                         elif self.info_button_rect.collidepoint(pos):
-                            credits_menu = CreditsScene(self.screen)  # Créer une instance du menu d'options
+                            credits_menu = CreditsScene(self.screen)
                             credits_menu.run()
 
             pygame.display.flip()

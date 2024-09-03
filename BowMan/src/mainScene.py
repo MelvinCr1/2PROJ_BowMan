@@ -15,14 +15,14 @@ class MainScene:
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.assets_path = os.path.join(self.base_path, '../assets/')
 
-        # Charger l'image de fond
+        # image de fond
         self.background_img = pygame.image.load(os.path.join(self.assets_path, 'backgrounds/background1.jpg')).convert()
 
         # Redimensionner l'image de fond pour qu'elle remplisse l'écran
         self.background_img = pygame.transform.scale(self.background_img, (self.width, self.height))
 
         # Chargement des images des boutons et les redimensionner
-        button_scale = 0.5  # Facteur d'échelle pour réduire la taille des boutons
+        button_scale = 0.5
         self.play_button_img = pygame.image.load(os.path.join(self.assets_path, 'buttons/play.png')).convert_alpha()
         self.play_button_img = pygame.transform.scale(self.play_button_img, (int(self.play_button_img.get_width() * button_scale), int(self.play_button_img.get_height() * button_scale)))
 
@@ -65,7 +65,7 @@ class MainScene:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:  # Bouton gauche de la souris
+                    if event.button == 1:
                         pos = pygame.mouse.get_pos()
                         if self.play_button_rect.collidepoint(pos):
                             customization_scene = CustomizationScene(self.screen)
@@ -83,7 +83,7 @@ class MainScene:
                             sys.exit()
 
             pygame.display.flip()
-            self.clock.tick(30)  # Limiter la vitesse de rafraîchissement à 30 FPS
+            self.clock.tick(30)
 
 if __name__ == '__main__':
     pygame.init()
