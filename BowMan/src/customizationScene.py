@@ -91,8 +91,15 @@ class CustomizationScene:
         # Ajuster la position de la case à cocher pour aligner avec le texte
         self.checkbox_rect.midright = (checkbox_text_rect.left - 10, checkbox_text_rect.centery)
 
-        # Dessiner la case à cocher
-        pygame.draw.rect(self.screen, self.checkbox_color, self.checkbox_rect, 2)
+        # Changer la couleur de la case à cocher si l'option d'obstacle est activée
+        if self.obstacle_option:
+            self.checkbox_color = (0, 255, 0)  # Couleur verte
+        else:
+            self.checkbox_color = (255, 255, 255)  # Couleur blanche
+
+        # Dessiner la case à cocher avec la couleur mise à jour
+        pygame.draw.rect(self.screen, self.checkbox_color, self.checkbox_rect)
+
         if self.obstacle_option:
             # Dessiner le tick (signe validé) en vert
             self.draw_tick(self.checkbox_rect, self.tick_color)
@@ -125,6 +132,7 @@ class CustomizationScene:
         self.screen.blit(self.back_button_img, self.back_button_rect.topleft)
 
         pygame.display.flip()
+
 
     def draw_tick(self, rect, color):
         """Dessiner un tick dans la case à cocher"""
