@@ -10,7 +10,7 @@ from endGameScene import EndGameScene
 from gameLogic.arrow import Arrow
 from gameLogic.archer import Archer
 from gameLogic.obstacle import Obstacle
-from gameLogic.ai import AI  # Importer la classe IA
+from gameLogic.ai import AI
 from gameLogic.serverStatus import ServerStatus
 
 
@@ -32,17 +32,14 @@ class GameScene:
             os.path.join(assets_path, 'backgrounds', settings["background"])).convert()
         self.background_img = pygame.transform.scale(self.background_img, (self.scene_width, self.scene_height))
 
-        # Ajuster la taille des archers
-        archer_scale_factor = 0.5  # Réduire la taille des archers à 50%
+        # taille des archers
+        archer_scale_factor = 0.5
         archer_img_left = pygame.image.load(os.path.join(assets_path, 'characters', settings["style"])).convert_alpha()
         archer_original_width, archer_original_height = archer_img_left.get_size()
-        archer_img_left = pygame.transform.scale(archer_img_left, (
-        int(archer_original_width * archer_scale_factor), int(archer_original_height * archer_scale_factor)))
+        archer_img_left = pygame.transform.scale(archer_img_left, (int(archer_original_width * archer_scale_factor), int(archer_original_height * archer_scale_factor)))
         archer_img_right = pygame.transform.flip(archer_img_left, True, False)
-        self.archer_left = Archer(archer_img_left, 50, self.height // 2 - archer_img_left.get_height() // 2,
-                                  self.screen)
-        self.archer_right = Archer(archer_img_right, self.scene_width - 250,
-                                   self.height // 2 - archer_img_right.get_height() // 2, self.screen)
+        self.archer_left = Archer(archer_img_left, 50, self.height // 2 - archer_img_left.get_height() // 2,self.screen)
+        self.archer_right = Archer(archer_img_right, self.scene_width - 250,self.height // 2 - archer_img_right.get_height() // 2, self.screen)
 
         # Hauteur pour tous les archers
         custom_y = 450
@@ -60,11 +57,8 @@ class GameScene:
         self.archer_left = Archer(archer_img_left, archer_left_x, custom_y, self.screen)
         self.archer_right = Archer(archer_img_right, archer_right_x, custom_y, self.screen)
 
-        # Initialiser 
-
         # Initialiser l'IA
-        self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2,
-                     self.screen)
+        self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2,self.screen)
 
         self.camera_x = 0
         self.camera_speed = 20
@@ -96,6 +90,7 @@ class GameScene:
         # Print le mode de jeu sélectionné
         print(f"Mode de jeu sélectionné : {settings.get('play_mode', 'non défini')}")
 
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,13 +105,19 @@ class GameScene:
                     y_velocity = -self.shoot_power * math.sin(angle_radians)
 
                     if self.turn == 'left':
-                        new_arrow = Arrow(self.screen, self.archer_left.rect.right, self.archer_left.rect.centery,
-                                          x_velocity, y_velocity, color=self.arrow_color)
+                        # Tirer légèrement à droite du centre de l'image
+                        start_x = self.archer_left.rect.centerx + 40
+                        # Tirer légèrement au-dessus du centre vertical
+                        start_y = self.archer_left.rect.top - 10
+                        new_arrow = Arrow(self.screen, start_x, start_y, x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'right'
                     elif self.turn == 'right':
-                        new_arrow = Arrow(self.screen, self.archer_right.rect.left, self.archer_right.rect.centery,
-                                          -x_velocity, y_velocity, color=self.arrow_color)
+                        # Tirer légèrement à gauche du centre de l'image
+                        start_x = self.archer_right.rect.centerx - 40
+                        # Tirer légèrement au-dessus du centre vertical
+                        start_y = self.archer_right.rect.top - 10
+                        new_arrow = Arrow(self.screen, start_x, start_y, -x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'left'
                 elif event.key == pygame.K_UP:
@@ -155,6 +156,10 @@ class GameScene:
                         pygame.quit()
                         sys.exit()
 
+
+
+
+
     def check_collisions(self):
         for arrow in self.arrows:
             # Collision avec l'archer gauche
@@ -173,9 +178,10 @@ class GameScene:
                     end_game_menu = EndGameScene(self.screen, "Archer Droit")
                     end_game_menu.run()
 
-            # Collision avec l'obstacle en utilisant contains_point
+            # Collision avec l'obstacle
             if self.obstacle and self.obstacle.contains_point(arrow.x, arrow.y):
                 self.arrows.remove(arrow)
+
 
     def update(self):
         if self.arrows:
@@ -194,7 +200,7 @@ class GameScene:
 
         self.check_collisions()
 
-        # Mettre à jour l'IA
+        # Meise à jour de l'IA
         if self.settings["play_mode"] == "IA":
             self.ai.update(self.arrows)
 
@@ -202,9 +208,9 @@ class GameScene:
         # Définir la couleur du cercle en fonction du statut du serveur
         if self.settings.get("play_mode") == "multiplayer":
             if self.server_status.is_running:
-                color = (0, 255, 0)  # Vert pour serveur actif
+                color = (0, 255, 0)  # Vert = actif
             else:
-                color = (255, 0, 0)  # Rouge pour serveur inactif
+                color = (255, 0, 0)  # Rouge = inactif
             pygame.draw.circle(self.screen, color, (self.width - 30, 30), 10)
 
     def draw(self):
@@ -213,7 +219,7 @@ class GameScene:
         self.archer_left.draw(self.camera_x)
         self.archer_right.draw(self.camera_x)
 
-        # Dessiner l'IA et sa vie seulement si le mode de jeu est IA
+        # Dessiner l'IA et sa vie
         if self.settings.get("play_mode") == "IA":
             self.ai.draw(self.camera_x)
 
@@ -226,7 +232,7 @@ class GameScene:
         # Dessiner le statut du serveur
         if self.settings.get("play_mode") == "multiplayer":
             self.draw_server_status_indicator()
-            self.server_status.draw()  # Dessiner le statut du serveur après l'indicateur
+            self.server_status.draw()
 
         # Power / angle texts
         font = pygame.font.Font(None, 36)
@@ -241,7 +247,7 @@ class GameScene:
         minutes = (elapsed_time_ms // 60000) % 60
         hours = (elapsed_time_ms // 3600000) % 24
         timer_text = font.render(f"{hours:02}:{minutes:02}:{seconds:02}", True, (255, 255, 255))
-        timer_rect = timer_text.get_rect(center=(self.width // 2, 30))  # Center horizontally, 30 pixels from the top
+        timer_rect = timer_text.get_rect(center=(self.width // 2, 30))
         self.screen.blit(timer_text, timer_rect.topleft)
 
         pygame.display.flip()
@@ -255,7 +261,7 @@ class GameScene:
                 self.update()
                 self.draw()
             else:
-                self.pause_menu.draw()  # Afficher l'interface de pause
+                self.pause_menu.draw()
                 action = self.pause_menu.handle_events()
                 if action == "continue":
                     self.paused = False
@@ -283,7 +289,7 @@ if __name__ == '__main__':
         "background": "background1.jpg",
         "style": "archer.png",
         "play_mode": "local",
-        "arrow_color": (0, 255, 0)  # Couleur de la pointe par défaut
+        "arrow_color": (0, 255, 0)
     }
     game = GameScene(screen, settings)
     game.run()
