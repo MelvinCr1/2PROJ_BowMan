@@ -102,7 +102,7 @@ class GameScene:
                     self.paused = not self.paused
                 elif event.key == pygame.K_a and not self.paused:
                     angle_radians = math.radians(self.shoot_angle)
-                    x_velocity = -self.shoot_power * math.cos(angle_radians)  # Tir uniquement vers la gauche
+                    x_velocity = self.shoot_power * math.cos(angle_radians)
                     y_velocity = -self.shoot_power * math.sin(angle_radians)
 
                     if self.turn == 'left':
@@ -112,17 +112,17 @@ class GameScene:
                         self.arrows.append(new_arrow)
                         self.player_has_shot = True
                         self.turn = 'right'
-                        
-                        # Assurez-vous que l'IA tire automatiquement après le tir du joueur
+
                         if self.settings["play_mode"] == "IA":
-                            self.IA.ready_to_shoot = True  # Indique que l'IA peut tirer maintenant
+                            self.IA.ready_to_shoot = True
 
                     elif self.turn == 'right':
                         start_x = self.archer_right.rect.centerx - 40
                         start_y = self.archer_right.rect.top - 10
-                        new_arrow = Arrow(self.screen, start_x, start_y, -x_velocity, y_velocity, color=self.arrow_color)
+                        new_arrow = Arrow(self.screen, start_x, start_y, -x_velocity, y_velocity,color=self.arrow_color)
                         self.arrows.append(new_arrow)
                         self.turn = 'left'
+
                 elif event.key == pygame.K_UP:
                     self.shoot_angle += 1
                     if self.shoot_angle > 90:
