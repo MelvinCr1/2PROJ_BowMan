@@ -10,7 +10,7 @@ from endGameScene import EndGameScene
 from gameLogic.arrow import Arrow
 from gameLogic.archer import Archer
 from gameLogic.obstacle import Obstacle
-from gameLogic.ai import AI
+from gameLogic.ia import IA
 from gameLogic.serverStatus import ServerStatus
 
 
@@ -57,9 +57,6 @@ class GameScene:
         self.archer_left = Archer(archer_img_left, archer_left_x, custom_y, self.screen)
         self.archer_right = Archer(archer_img_right, archer_right_x, custom_y, self.screen)
 
-        # Initialiser l'IA
-        self.ai = AI(archer_img_right, self.scene_width - 250, self.height // 2 - archer_img_right.get_height() // 2,self.screen)
-
         self.camera_x = 0
         self.camera_speed = 20
         self.move_camera_right = False
@@ -74,11 +71,15 @@ class GameScene:
             self.obstacle = None  # Pas d'obstacle si non sélectionné
 
         self.turn = 'left'
-
+        self.player_has_shot = False
         self.shoot_power = 20
         self.shoot_angle = 45
 
         self.start_time = pygame.time.get_ticks()
+
+        if settings["play_mode"] == "IA":
+            self.IA = IA(self.archer_right.image, self.scene_width - 250, self.height // 2 - self.archer_right.image.get_height() // 2, self.screen)
+
 
         if settings.get("play_mode") == "multiplayer":
             self.server_status = ServerStatus(screen)
@@ -101,21 +102,23 @@ class GameScene:
                     self.paused = not self.paused
                 elif event.key == pygame.K_a and not self.paused:
                     angle_radians = math.radians(self.shoot_angle)
-                    x_velocity = self.shoot_power * math.cos(angle_radians)
+                    x_velocity = -self.shoot_power * math.cos(angle_radians)  # Tir uniquement vers la gauche
                     y_velocity = -self.shoot_power * math.sin(angle_radians)
 
                     if self.turn == 'left':
-                        # Tirer légèrement à droite du centre de l'image
                         start_x = self.archer_left.rect.centerx + 40
-                        # Tirer légèrement au-dessus du centre vertical
                         start_y = self.archer_left.rect.top - 10
                         new_arrow = Arrow(self.screen, start_x, start_y, x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
+                        self.player_has_shot = True
                         self.turn = 'right'
+                        
+                        # Assurez-vous que l'IA tire automatiquement après le tir du joueur
+                        if self.settings["play_mode"] == "IA":
+                            self.IA.ready_to_shoot = True  # Indique que l'IA peut tirer maintenant
+
                     elif self.turn == 'right':
-                        # Tirer légèrement à gauche du centre de l'image
                         start_x = self.archer_right.rect.centerx - 40
-                        # Tirer légèrement au-dessus du centre vertical
                         start_y = self.archer_right.rect.top - 10
                         new_arrow = Arrow(self.screen, start_x, start_y, -x_velocity, y_velocity, color=self.arrow_color)
                         self.arrows.append(new_arrow)
@@ -155,10 +158,6 @@ class GameScene:
                     elif action == "quit":
                         pygame.quit()
                         sys.exit()
-
-
-
-
 
     def check_collisions(self):
         for arrow in self.arrows:
@@ -200,9 +199,10 @@ class GameScene:
 
         self.check_collisions()
 
-        # Meise à jour de l'IA
+        # Mise à jour de l'IA
         if self.settings["play_mode"] == "IA":
-            self.ai.update(self.arrows)
+            self.IA.update(self.player_has_shot, self.arrows)
+            self.player_has_shot = False
 
     def draw_server_status_indicator(self):
         # Définir la couleur du cercle en fonction du statut du serveur
@@ -221,7 +221,7 @@ class GameScene:
 
         # Dessiner l'IA et sa vie
         if self.settings.get("play_mode") == "IA":
-            self.ai.draw(self.camera_x)
+            self.IA.draw(self.camera_x)
 
         if self.obstacle:
             self.obstacle.draw(self.camera_x)
