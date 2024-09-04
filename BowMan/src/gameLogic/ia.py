@@ -1,7 +1,7 @@
 import pygame
 import random
 import math
-from gameLogic.arrow import Arrow
+from arrow import Arrow
 
 class IA:
     def __init__(self, archer, screen, obstacle, arrows, turn):
