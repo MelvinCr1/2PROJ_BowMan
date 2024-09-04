@@ -78,7 +78,7 @@ class CustomizationScene:
 
         # cocher et le texte
         checkbox_text = "Ajouter un obstacle"
-        checkbox_text_surf = self.font.render(checkbox_text, True, (255, 255, 255))
+        checkbox_text_surf = self.font.render(checkbox_text, True, (0, 0, 0))  # Noir
         checkbox_text_rect = checkbox_text_surf.get_rect()
 
         checkbox_text_rect.centerx = self.width // 2
@@ -97,7 +97,7 @@ class CustomizationScene:
         if self.obstacle_option:
             # tick (signe validé) en vert
             self.draw_tick(self.checkbox_rect, self.tick_color)
-        
+
         # Dessiner le texte
         self.screen.blit(checkbox_text_surf, checkbox_text_rect.topleft)
 
@@ -119,14 +119,13 @@ class CustomizationScene:
         current_y = start_y
         for line in lines:
             if line:  # Ne pas dessiner les boîtes pour les lignes vides
-                text_surf = self.font.render(line, True, (245, 245, 220))  # Beige
+                text_surf = self.font.render(line, True, (0, 0, 0))  # Noir
                 self.screen.blit(text_surf, (self.width // 2 - text_surf.get_width() // 2, current_y))
             current_y += line_height
-        
+
         self.screen.blit(self.back_button_img, self.back_button_rect.topleft)
 
         pygame.display.flip()
-
 
     def draw_tick(self, rect, color):
         """Dessiner un tick dans la case à cocher"""

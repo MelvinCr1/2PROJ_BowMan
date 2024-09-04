@@ -1,7 +1,7 @@
 import pygame
 import random
 import math
-from arrow import Arrow
+#from arrow import Arrow
 
 class IA:
     def __init__(self, archer, screen, obstacle, arrows, turn):
@@ -50,15 +50,15 @@ class IA:
         x_velocity = self.shoot_power * math.cos(angle_radians)
         y_velocity = -self.shoot_power * math.sin(angle_radians)
 
-        if self.turn == 'left':
-            new_arrow = Arrow(self.screen, self.archer.rect.right, self.archer.rect.centery, x_velocity, y_velocity)
-        else:
-            new_arrow = Arrow(self.screen, self.archer.rect.left, self.archer.rect.centery, -x_velocity, y_velocity)
+        #if self.turn == 'left':
+            #new_arrow = Arrow(self.screen, self.archer.rect.right, self.archer.rect.centery, x_velocity, y_velocity)
+        #else:
+            #new_arrow = Arrow(self.screen, self.archer.rect.left, self.archer.rect.centery, -x_velocity, y_velocity)
         
-        self.arrows.append(new_arrow)
+        #self.arrows.append(new_arrow)
         
         # Mettre à jour la distance du dernier tir
-        self.last_shot_distance = math.hypot(new_arrow.x - self.target_x, new_arrow.y - self.target_y)
+        #self.last_shot_distance = math.hypot(new_arrow.x - self.target_x, new_arrow.y - self.target_y)
 
     def update(self):
         # Décider de l'action à chaque mise à jour
